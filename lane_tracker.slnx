@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="lane_tracker/lane_tracker.vcxproj" Id="1d925298-17e0-44bb-878a-229e9941b49e" />
+</Solution>
