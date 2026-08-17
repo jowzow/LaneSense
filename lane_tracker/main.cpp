@@ -11,6 +11,12 @@
 
 namespace fs = std::filesystem;
 
+//std::string folder_path = "INSERT_FOLDER_PATH";
+//std::string model_path = "INSERT_MODEL_PATH";
+
+std::string folder_path = "C:/Users/johnn/Downloads/testing_footage/";
+std::string model_path = "C:/src/lane_tracker/lane_tracker/models/ultra-fast-lane-det-culane.onnx";
+
 // ---------------------------------------------------------------------------
 // Top-of-file tuning: hood/dashboard exclusion
 // ---------------------------------------------------------------------------
@@ -20,7 +26,7 @@ namespace fs = std::filesystem;
 int HOOD_EXCLUSION_HEIGHT_PX = 220;
 
 // Whether the hood exclusion line is drawn on screen at all.
-bool SHOW_HOOD_EXCLUSION_LINE = false;
+bool SHOW_HOOD_EXCLUSION_LINE = true; // temporarily on - diagnosing far-lane edge-curving (6.1)
 
 // ---------------------------------------------------------------------------
 // Top-of-file tuning: paint detection
@@ -38,7 +44,12 @@ int PAINT_SEARCH_STEP_PX = 4;
 // Show the full "SOLID  n=8  paint=84%  trans=3" breakdown instead of just "SOLID" - flip
 // this on while tuning the thresholds below so you can see the actual numbers driving
 // each call, flip it off for a clean display otherwise.
-bool SHOW_LINE_TYPE_DIAGNOSTICS = false;
+bool SHOW_LINE_TYPE_DIAGNOSTICS = true; // temporarily on - diagnosing far-lane edge-curving (6.1)
+
+// Temporary: logs argmax bin vs softmax-expectation bin for the far-left/far-right lane
+// channels at the horizon-side row anchors, to test whether tracked-point edge-curving
+// comes from truncation bias in the expected-value decode. Remove once 6.1 is resolved.
+bool DEBUG_LOG_DECODER_BIAS = true;
 
 // A lane is called SOLID if painted_fraction is above this AND transitions is at or below this.
 float SOLID_MIN_PAINTED_FRACTION = 0.70f;
@@ -300,9 +311,6 @@ struct LineTypeHistory {
 };
 
 int main() {
-    std::string folder_path = "INSERT_FOLDER_PATH";
-    std::string model_path = "INSERT_MODEL_PATH";
-
     Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "LaneTrackerEnv");
     Ort::SessionOptions session_options;
 
@@ -334,6 +342,20 @@ int main() {
 
     auto output_name_ptr = session->GetOutputNameAllocated(0, allocator);
     std::string output_name = output_name_ptr.get();
+
+    // Temporary (6.1 diagnosis, plan prerequisite): the decode loop below hardcodes
+    // num_bins=201/num_anchors=18 - verify those against what the loaded model actually
+    // reports before trusting any bias measurement taken from that decode loop.
+    {
+        Ort::TypeInfo output_type_info = session->GetOutputTypeInfo(0);
+        auto output_tensor_info = output_type_info.GetTensorTypeAndShapeInfo();
+        std::vector<int64_t> output_dims = output_tensor_info.GetShape();
+        std::cout << "[decbias] actual output shape: [";
+        for (size_t i = 0; i < output_dims.size(); ++i) {
+            std::cout << output_dims[i] << (i + 1 < output_dims.size() ? "," : "");
+        }
+        std::cout << "] (code assumes [1,201,18,4])" << std::endl;
+    }
 
     const char* input_names[] = { input_name.c_str() };
     const char* output_names[] = { output_name.c_str() };
@@ -435,6 +457,13 @@ int main() {
             }
             // At or ahead of schedule - process this frame normally, exactly as before.
 
+            // Temporary (6.1 diagnosis): frame_index increments on skipped frames too (see
+            // above), so gating debug logging on frame_index is unreliable on a Debug build
+            // that's falling behind - most frames get skipped and which ones survive isn't
+            // correlated with frame_index's value. Count only frames that actually reach here.
+            static long long processed_frame_count = 0;
+            processed_frame_count++;
+
             int crop_y = preProcessFrame(frame, input_tensor_values, model_input_w, model_input_h);
             int crop_h = frame.rows - crop_y;
             int hood_cutoff_y = frame.rows - HOOD_EXCLUSION_HEIGHT_PX;
@@ -483,9 +512,10 @@ int main() {
                     float p_background = exp_all[200] / sum_exp_all;
 
                     float max_spatial_prob = 0.0f;
+                    int argmax_bin = 0;
                     for (int b = 0; b < 200; ++b) {
                         float p = exp_all[b] / sum_exp_all;
-                        if (p > max_spatial_prob) max_spatial_prob = p;
+                        if (p > max_spatial_prob) { max_spatial_prob = p; argmax_bin = b; }
                     }
 
                     bool confident = (p_background < MAX_BACKGROUND_PROB) && (max_spatial_prob > MIN_PEAK_SPATIAL_PROB);
@@ -497,8 +527,29 @@ int main() {
                         expected_x += static_cast<float>(b) * (exp_all[b] / sum_exp_spatial);
                     }
 
-                    float model_x = expected_x * (static_cast<float>(model_input_w) / 200.0f);
+                    // Bin-to-pixel mapping matches the official UFLD reference decoder: divide
+                    // by griding_num-1 (199), not griding_num (200), and index bins from 1.
+                    // The old /200.0f version compressed far-bin points inward by ~8-14 native
+                    // px (confirmed via [decbias] logging, 6.1 Step 2) - small but real and
+                    // always in the same (inward) direction, independent of footage.
+                    float model_x = (expected_x + 1.0f) * (static_cast<float>(model_input_w - 1) / 199.0f) - 1.0f;
                     float model_y = static_cast<float>(culane_row_anchors[a]);
+
+                    // Temporary (6.1 diagnosis): compare argmax bin vs the softmax-expectation
+                    // bin for the far-left/far-right channels at the horizon-side anchors - Step 1
+                    // truncation-bias check. Not yet confirmed as of this pass (669-sample run
+                    // showed no consistent inward-pulling direction for the well-sampled far-right
+                    // channel). See plan §6.1.
+                    if (DEBUG_LOG_DECODER_BIAS && (l == 0 || l == num_lanes - 1) && a < 5) {
+                        float gap_bins = static_cast<float>(argmax_bin) - expected_x;
+                        std::cout << "[decbias] frame=" << processed_frame_count
+                                   << " lane=" << l << (l == 0 ? "(far-left)" : "(far-right)")
+                                   << " anchor_y=" << culane_row_anchors[a]
+                                   << " argmax=" << argmax_bin
+                                   << " expected=" << expected_x
+                                   << " gap_bins=" << gap_bins
+                                   << std::endl;
+                    }
 
                     int native_x = static_cast<int>(model_x * scale_x);
                     int native_y = static_cast<int>(model_y * scale_y) + crop_y;
@@ -600,6 +651,21 @@ int main() {
                 cv::line(frame, cv::Point(0, hood_cutoff_y), cv::Point(frame.cols, hood_cutoff_y), COLOR_HOOD_LINE, 1, cv::LINE_AA);
                 cv::putText(frame, "Hood exclusion line", cv::Point(10, hood_cutoff_y - 8),
                     cv::FONT_HERSHEY_SIMPLEX, 0.45, COLOR_HOOD_LINE, 1, cv::LINE_AA);
+            }
+
+            // Temporary (6.1 diagnosis, plan Step 0): dump a handful of frames with a
+            // populated far-lane channel to disk so the tracked-point overlay can be
+            // checked against actual paint pixels without needing to watch the live window.
+            if (DEBUG_LOG_DECODER_BIAS) {
+                static int dumped_frames = 0;
+                bool far_lane_populated = points_for_display[0].size() >= 4 ||
+                                           points_for_display[num_lanes - 1].size() >= 4;
+                if (dumped_frames < 6 && far_lane_populated) {
+                    std::string dump_path = "C:/Users/johnn/AppData/Local/Temp/claude/C--src-lane-tracker/670b6ff1-c000-425a-98a3-77b2fdfed6e5/scratchpad/frame_dump_" + std::to_string(dumped_frames) + ".png";
+                    cv::imwrite(dump_path, frame);
+                    std::cout << "[decbias] dumped " << dump_path << std::endl;
+                    dumped_frames++;
+                }
             }
 
             cv::imshow("UFLD Tracker", frame);
