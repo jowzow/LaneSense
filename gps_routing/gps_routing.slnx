@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="gps_routing/gps_routing.vcxproj" Id="3b27f8f1-146a-414a-bf55-539940f066ca" />
+</Solution>

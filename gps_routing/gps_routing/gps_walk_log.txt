@@ -1,0 +1,1002 @@
+
+--- Starting new run ---
+Waiting for first GPS fix before requesting a route...
+Got first fix: 37.2619, -121.871
+
+Got route with 7 steps.
+
+Step 0/6 [DEPART] 632m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 632m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 632m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 632m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 632m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 633m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 633m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 634m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 635m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 635m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 635m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 635m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 637m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 635m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 635m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 635m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 635m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 635m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 635m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 634m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 633m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 632m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 631m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 629m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 628m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 627m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 629m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 630m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 633m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 640m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 644m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 648m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 652m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 657m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 661m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 664m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 668m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 671m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 673m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 674m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 676m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 676m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 676m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 676m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 676m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 677m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 677m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 679m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 681m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 683m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 685m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 685m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 685m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 685m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 685m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 685m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 685m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 685m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 685m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 685m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 684m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 682m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 680m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 677m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 674m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 669m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 664m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 660m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 655m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 650m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 646m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 642m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 638m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 634m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 631m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 628m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 625m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 622m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 618m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 614m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 613m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 607m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 601m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 594m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 587m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 579m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 572m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 565m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 557m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 549m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 542m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 535m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 528m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 520m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 514m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 506m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 499m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 492m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 486m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 480m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 475m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 469m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 463m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 458m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 453m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 449m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 447m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 445m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 443m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 444m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 444m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 445m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 446m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 447m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 448m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 448m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 449m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 450m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 452m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 454m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 457m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 459m remaining - Head south on Minas Dr toward Tonino Dr
+
+--- Starting new run ---
+Waiting for first GPS fix before requesting a route...
+Got first fix: 37.2619, -121.871
+
+Got route with 7 steps.
+
+Step 0/6 [DEPART] 659m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 659m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 659m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 659m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 659m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 660m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 660m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 660m remaining - Head south on Minas Dr toward Tonino Dr
+
+--- Starting new run ---
+Waiting for first GPS fix before requesting a route...
+Got first fix: 37.2619, -121.871
+
+Got route with 7 steps.
+
+Step 0/6 [DEPART] 635m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 635m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 637m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 636m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 635m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 634m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 634m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 633m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 633m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 633m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 631m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 629m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 627m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 624m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 620m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 616m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 611m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 605m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 597m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 590m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 581m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 573m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 564m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 555m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 546m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 538m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 529m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 521m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 512m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 505m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 497m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 490m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 483m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 477m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 470m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 464m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 459m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 454m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 450m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 447m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 444m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 442m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 439m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 438m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 436m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 434m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 431m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 428m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 426m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 423m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 420m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 416m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 411m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 406m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 400m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 394m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 389m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 383m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 378m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 372m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 365m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 359m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 352m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 346m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 339m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 333m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 326m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 318m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 311m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 303m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 296m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 289m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 283m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 278m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 275m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 272m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 270m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 269m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 269m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 267m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 263m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 257m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 250m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 240m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 230m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 219m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 208m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 195m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 182m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 168m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 155m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 142m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 129m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 116m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 104m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 92m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 80m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 68m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 58m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 49m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 41m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 34m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 28m remaining - Head south on Minas Dr toward Tonino Dr
+Step 0/6 [DEPART] 24m remaining - Head south on Minas Dr toward Tonino Dr
+>>> Reached maneuver point. Next: TURN_LEFT - Turn left onto Pearl Ave
+
+Step 1/6 [TURN_LEFT] 536m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 536m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 536m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 536m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 535m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 529m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 522m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 513m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 503m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 493m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 482m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 470m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 456m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 442m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 428m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 413m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 398m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 383m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 367m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 351m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 336m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 319m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 303m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 287m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 271m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 256m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 240m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 224m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 209m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 194m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 179m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 164m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 150m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 136m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 122m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 108m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 95m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 83m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 71m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 60m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 49m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 39m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 29m remaining - Turn left onto Pearl Ave
+Step 1/6 [TURN_LEFT] 20m remaining - Turn left onto Pearl Ave
+>>> Reached maneuver point. Next: TURN_RIGHT - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+
+Step 2/6 [TURN_RIGHT] 3057m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3058m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3059m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3059m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3058m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3058m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3057m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3057m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3056m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3055m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3053m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3048m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3041m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3031m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3020m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 3007m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2994m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2978m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2963m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2947m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2931m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2915m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2899m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2882m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2864m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2845m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2826m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2806m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2786m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2766m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2747m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2727m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2708m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2689m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2670m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2650m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2631m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2612m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2592m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2573m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2554m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2535m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2517m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2498m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2480m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2461m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2442m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2424m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2405m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2387m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2368m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2350m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2331m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2313m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2294m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2275m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2256m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2237m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2219m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2200m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2181m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2163m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2145m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2126m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2108m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2090m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2072m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2054m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2036m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2018m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 2000m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1983m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1966m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1948m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1931m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1915m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1898m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1881m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1862m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1843m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1824m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1804m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1785m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1766m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1747m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1729m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1710m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1690m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1671m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1652m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1632m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1612m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1592m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1572m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1554m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1535m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1515m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1495m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1476m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1458m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1439m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1422m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1406m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1390m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1374m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1358m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1341m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1323m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1305m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1288m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1270m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1252m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1235m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1217m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1199m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1181m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1163m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1145m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1126m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1108m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1089m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1070m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1051m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1032m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 1014m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 995m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 977m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 958m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 939m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 920m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 901m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 882m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 862m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 843m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 824m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 805m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 785m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 765m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 746m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 726m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 706m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 687m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 667m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 648m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 629m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 610m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 591m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 571m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 552m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 532m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 513m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 495m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 477m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 460m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 443m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 426m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 409m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 394m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 378m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 362m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 346m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 331m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 317m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 303m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 290m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 276m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 263m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 249m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 234m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 220m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 205m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 190m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 175m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 160m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 145m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 130m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 116m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 103m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 90m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 79m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 70m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 62m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 56m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 50m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 46m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 44m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 43m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 42m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 40m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 37m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 33m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 27m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+Step 2/6 [TURN_RIGHT] 20m remaining - Turn right onto Branham Ln
+Pass by Wells Fargo Bank (on the left in 1.8 mi)
+>>> Reached maneuver point. Next: TURN_LEFT - Turn left onto Snell Ave
+
+Step 3/6 [TURN_LEFT] 367m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 370m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 370m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 368m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 363m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 356m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 347m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 337m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 326m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 314m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 300m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 286m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 271m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 255m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 238m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 221m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 204m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 187m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 170m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 154m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 140m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 128m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 118m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 107m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 98m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 89m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 81m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 74m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 69m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 66m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 63m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 62m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 62m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 62m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 61m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 60m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 59m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 58m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 57m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 56m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 55m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 52m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 49m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 44m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 37m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 30m remaining - Turn left onto Snell Ave
+Step 3/6 [TURN_LEFT] 21m remaining - Turn left onto Snell Ave
+>>> Reached maneuver point. Next: TURN_RIGHT - Turn right onto Skyway Dr
+
+Step 4/6 [TURN_RIGHT] 852m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 855m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 857m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 858m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 856m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 852m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 845m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 835m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 824m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 812m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 798m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 783m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 769m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 754m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 739m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 724m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 709m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 694m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 679m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 664m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 649m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 633m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 616m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 600m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 584m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 567m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 549m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 529m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 509m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 487m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 466m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 445m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 425m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 405m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 386m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 368m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 350m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 333m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 316m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 300m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 283m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 267m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 251m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 237m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 223m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 209m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 195m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 182m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 169m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 156m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 144m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 131m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 119m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 107m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 95m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 83m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 70m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 59m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 48m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 39m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 30m remaining - Turn right onto Skyway Dr
+Step 4/6 [TURN_RIGHT] 22m remaining - Turn right onto Skyway Dr
+>>> Reached maneuver point. Next: NAME_CHANGE - Skyway Dr turns left and becomes Valley Christian Access
+
+Step 5/6 [NAME_CHANGE] 189m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 185m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 180m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 173m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 165m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 157m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 148m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 139m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 131m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 125m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 118m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 112m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 106m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 98m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 90m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 80m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 71m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 61m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 51m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 40m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 30m remaining - Skyway Dr turns left and becomes Valley Christian Access
+Step 5/6 [NAME_CHANGE] 20m remaining - Skyway Dr turns left and becomes Valley Christian Access
+>>> Reached maneuver point. Next: TURN_RIGHT - Turn right to stay on Valley Christian Access
+Destination will be on the left
+
+Step 6/6 [TURN_RIGHT] 153m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 157m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 160m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 161m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 161m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 159m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 155m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 149m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 142m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 134m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 125m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 116m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 107m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 98m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 90m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 83m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 75m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 67m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 60m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 52m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 45m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 38m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 33m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 29m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+Step 6/6 [TURN_RIGHT] 24m remaining - Turn right to stay on Valley Christian Access
+Destination will be on the left
+
+Arrived.
