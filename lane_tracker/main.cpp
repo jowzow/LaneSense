@@ -25,12 +25,11 @@ std::string folder_path = "C:/Users/johnn/Downloads/testing_footage/original_das
 std::string model_path = "C:/src/lane_tracker/lane_tracker/models/ultra-fast-lane-det-culane.onnx";
 
 // ---------------------------------------------------------------------------
-// Top-of-file tuning: hood/dashboard exclusion
+// Hood/dashboard exclusion: no manual pixel constant anymore - see
+// calibrateHoodCutoff() below preProcessFrame. Computed once per video and gates both
+// tracking and classification exactly like the old constant did - same single cutoff, same
+// two consumers, just measured per-video instead of hand-typed.
 // ---------------------------------------------------------------------------
-// How many pixels UP FROM THE BOTTOM of the frame count as hood/dashboard, not road.
-// Points in that band are dropped before drawing OR classification. Absolute pixel
-// count, not a fraction of frame height - recheck this if your footage resolution changes.
-int HOOD_EXCLUSION_HEIGHT_PX = 220;
 
 // Whether the hood exclusion line is drawn on screen at all.
 bool SHOW_HOOD_EXCLUSION_LINE = true; // temporarily on - diagnosing far-lane edge-curving (6.1)
@@ -98,6 +97,92 @@ int preProcessFrame(const cv::Mat& src_frame, std::vector<float>& input_tensor_v
     }
 
     return crop_y;
+}
+
+// ---------------------------------------------------------------------------
+// Automatic hood/dashboard boundary detection
+// ---------------------------------------------------------------------------
+// UFLD was trained on CULane, which never frames a hood, so its row anchors still land on
+// whatever is physically at the bottom of THIS camera's frame - usually the hood, not road.
+// This replaces the old hand-typed pixel constant with a per-video measurement, but plays
+// the exact same role: one cutoff, gating both tracking and classification identically.
+//
+// Validated against two different real vehicles with the SAME parameters, no retuning
+// between them: a textured/painted hood (1920x1080) and a black, mirror-reflective hood
+// (1338x750, different shape entirely). Scans ONE wide horizontal band, not per-column -
+// narrow bands got hijacked by local features (a lane stripe, a reflection, an OSD overlay)
+// on both vehicles tested, and per-column curve-fitting was tried and found LESS robust
+// on the reflective hood, not more, so it was dropped in favor of this simpler version.
+// Finds the FIRST genuine edge encountered coming from the road side (top of the search
+// band downward), not the single strongest edge in the range - the strongest edge is
+// reliably a real-but-wrong vehicle feature further into the hood (a cowl trim seam, a
+// wiper rest position), not the boundary itself.
+int findFirstProminentPeak(const std::vector<float>& row_energy, int search_lo, int search_hi,
+    int window, float min_prominence_ratio) {
+    for (int y = search_lo + window; y < search_hi - window; ++y) {
+        float center = row_energy[y];
+        float local_max = center;
+        for (int k = -window; k <= window; ++k) local_max = std::max(local_max, row_energy[y + k]);
+        if (center != local_max) continue; // not a local max over this window
+
+        float left_floor = row_energy[y - window];
+        for (int k = -window; k < 0; ++k) left_floor = std::min(left_floor, row_energy[y + k]);
+        float right_floor = row_energy[y + 1];
+        for (int k = 1; k <= window; ++k) right_floor = std::min(right_floor, row_energy[y + k]);
+        float local_floor = std::min(left_floor, right_floor);
+
+        if (local_floor > 0.0f && (center / local_floor) >= min_prominence_ratio) return y;
+    }
+    return -1; // no confident edge - caller applies a generic fallback
+}
+
+// Runs once per opened video file, on its own throwaway VideoCapture (never seeks or shares
+// state with the real playback capture, so it can't disturb frame_index or the pacing
+// clock). Returns a native_y cutoff - points with native_y >= this are treated as hood, same
+// as the old constant - or -1 if this file couldn't be confidently calibrated (e.g. a
+// degenerate clip), in which case the caller applies a generic fallback fraction.
+int calibrateHoodCutoff(const std::string& video_path) {
+    const int   NUM_CALIB_FRAMES = 20;
+    const int   FRAME_STRIDE = 3;
+    const float BAND_FRAC = 0.6f;   // central 60% of columns - dodges corner OSD overlays
+    const float SEARCH_LO_FRAC = 0.67f;  // boundary must be in the bottom third
+    const float SEED_FRAC = 0.05f;  // bottom 5% is unconditionally past any real boundary
+    const int   PEAK_WINDOW = 10;    // local-max window, in rows
+    const float MIN_PROMINENCE_RATIO = 1.8f;   // how much a peak must clear its local floor by
+
+    cv::VideoCapture calib(video_path);
+    if (!calib.isOpened()) return -1;
+
+    std::vector<cv::Mat> frames;
+    cv::Mat f;
+    int i = 0;
+    while (i < NUM_CALIB_FRAMES * FRAME_STRIDE && (int)frames.size() < NUM_CALIB_FRAMES) {
+        calib >> f;
+        if (f.empty()) break;
+        if (i % FRAME_STRIDE == 0) frames.push_back(f.clone());
+        ++i;
+    }
+    if (frames.empty()) return -1;
+
+    int h = frames[0].rows, w = frames[0].cols;
+    int x0 = static_cast<int>(w * (1.0f - BAND_FRAC) / 2.0f), x1 = w - x0;
+
+    std::vector<float> row_energy(h, 0.0f);
+    for (auto& fr : frames) {
+        cv::Mat gray, sob;
+        cv::cvtColor(fr, gray, cv::COLOR_BGR2GRAY);
+        cv::Sobel(gray(cv::Rect(x0, 0, x1 - x0, h)), sob, CV_32F, 0, 1, 3);
+        cv::Mat abs_sob = cv::abs(sob), row_mean;
+        cv::reduce(abs_sob, row_mean, 1, cv::REDUCE_AVG, CV_32F);
+        for (int y = 0; y < h; ++y) row_energy[y] += row_mean.at<float>(y);
+    }
+    for (auto& v : row_energy) v /= static_cast<float>(frames.size());
+
+    int seed_rows = std::max(1, static_cast<int>(h * SEED_FRAC));
+    int search_lo = static_cast<int>(h * SEARCH_LO_FRAC);
+    int search_hi = h - seed_rows;
+
+    return findFirstProminentPeak(row_energy, search_lo, search_hi, PEAK_WINDOW, MIN_PROMINENCE_RATIO);
 }
 
 // ---------------------------------------------------------------------------
@@ -475,6 +560,29 @@ int main() {
         if (!cap.isOpened()) continue;
         std::cout << "\nPlaying [" << file_idx + 1 << "/" << video_files.size() << "]: " << video_path << std::endl;
 
+        // Permanent calibration offset: measured ONCE, by comparing the auto-detected
+        // boundary against the last known-good hand-tuned constant this project shipped
+        // with (HOOD_EXCLUSION_HEIGHT_PX=220, i.e. cutoff=860 on this camera's 1080-tall
+        // frame) on the reference footage in original_dashcam/. auto-detection there
+        // measured 819 - so PERMANENT_OFFSET_PX = 860 - 819 = 41. This is now a fixed
+        // constant, not recomputed per video, specifically so tracking on this camera's
+        // footage matches the last GitHub-pushed behavior exactly (same anchors admitted,
+        // same cutoff row), while still adapting to genuinely different footage through the
+        // calibrateHoodCutoff() measurement it's added on top of.
+        const int PERMANENT_OFFSET_PX = 41;
+
+        int hood_cutoff_y = calibrateHoodCutoff(video_path);
+        if (hood_cutoff_y < 0) {
+            int fallback_h = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
+            if (fallback_h <= 1) fallback_h = 1080; // last-resort guard if container metadata is unreadable
+            hood_cutoff_y = static_cast<int>(fallback_h * 0.78f);
+            std::cout << "[hood] " << video_path << ": no confident boundary found - using fallback hood_cutoff_y=" << hood_cutoff_y << std::endl;
+        }
+        else {
+            hood_cutoff_y += PERMANENT_OFFSET_PX;
+            std::cout << "[hood] " << video_path << ": hood_cutoff_y=" << hood_cutoff_y << " (auto-detected + " << PERMANENT_OFFSET_PX << "px permanent offset)" << std::endl;
+        }
+
         auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 
         // Real-time playback pacing: compare the video's own timeline against wall-clock
@@ -519,7 +627,6 @@ int main() {
 
             int crop_y = preProcessFrame(frame, input_tensor_values, model_input_w, model_input_h);
             int crop_h = frame.rows - crop_y;
-            int hood_cutoff_y = frame.rows - HOOD_EXCLUSION_HEIGHT_PX;
 
             std::vector<int64_t> current_input_dims = { 1, 3, model_input_h, model_input_w };
             Ort::Value input_tensor = Ort::Value::CreateTensor<float>(
