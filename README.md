@@ -1,6 +1,8 @@
 # LaneSense
 
-A dashcam-based lane detection and highway navigation assistant. A forward-facing camera feed is run through Ultra-Fast-Lane-Detection (UFLD) in real time to track lane position and classify solid vs. dashed lane markings, combined with live GPS and Google Maps routing to drive turn-by-turn LED signals on the steering wheel.
+A dashcam-based lane detection and highway navigation assistant. A forward-facing camera feed is run through Ultra-Fast-Lane-Detection (UFLD) in real time to track lane position and classify solid vs. dashed lane markings. A separate GPS + Google Maps routing module drives turn-by-turn LED signals on the steering wheel; it's built and validated standalone but not yet wired into the lane-tracking pipeline (see **Known limitations**).
+
+![LaneSense lane tracking demo](docs/demo.gif)
 
 ## What it does
 
@@ -20,7 +22,7 @@ A dashcam-based lane detection and highway navigation assistant. A forward-facin
 
 - C++17
 - [OpenCV](https://opencv.org/)
-- [ONNX Runtime](https://onnxruntime.ai/) (C++ API)
+- [ONNX Runtime](https://onnxruntime.ai/) (C++ API), with the DirectML execution provider for GPU inference (falls back to 11-core CPU if unavailable)
 - A CULane-configured UFLD ONNX model (see **Model** below - not included in this repo)
 - Google Maps Routes API key
 
@@ -46,6 +48,7 @@ Confirm the model reports an output shape of `[1, 201, 18, 4]` — that's the CU
 - **Row-anchor detection ceiling**: UFLD's CULane row anchors only cover the lower ~58% of whatever region is fed to the model, a hard architectural limit, not a bug.
 - **No bird's-eye normalization for line-type classification**: paint sampling happens in the raw camera frame, so a fixed pixel step covers more real-world distance far away than close up. This is the main source of remaining classification noise on curves and at distance.
 - **Quadratic curve fits can be unstable near the ends of a lane's tracked point range**, occasionally causing the sampling path to drift off a genuinely solid line. Actively being worked on.
+- **GPS/LED turn-signal module isn't wired into the lane-tracking pipeline yet.** `gps_routing/` and `led_firmware/` are a separate, standalone-validated protocol (GPS + routing driving the LED state machine over serial), but `lane_tracker` doesn't call into it yet - they build and run independently for now.
 - **This is a research/hobby project, not a safety system.** It should not be relied on for actual driving decisions.
 
 ## Credits
