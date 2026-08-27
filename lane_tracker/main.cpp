@@ -64,6 +64,24 @@ double TEMPORAL_BASE_THRESHOLD_PX = 30.0;
 long long TEMPORAL_MAX_GAP_FRAMES = 10;
 
 // ---------------------------------------------------------------------------
+// Top-of-file tuning: playback controls
+// ---------------------------------------------------------------------------
+// How far one arrow-key press moves through the footage. Seeks run over the WHOLE folder as
+// a single timeline, not just the clip currently playing - see the clip table built in main().
+double SEEK_STEP_SEC = 10.0;
+
+// Which arrow does which. Set to +1.0 for the conventional mapping (Right = forward through
+// the footage, Left = back); set to -1.0 to swap them.
+double SEEK_RIGHT_DIRECTION = +1.0;
+
+// waitKeyEx codes for the arrow keys. Windows' highgui backend reports them in the high
+// bytes; the GTK/Qt values are listed too so this keeps working if the project is ever built
+// on a non-Windows backend. Deliberately NOT matching the bare values 81/83 that some
+// backends use - those collide with ASCII 'Q' and 'S'.
+bool isSeekBackKey(int k) { return k == 2424832 || k == 65361; }    // Left
+bool isSeekForwardKey(int k) { return k == 2555904 || k == 65363; } // Right
+
+// ---------------------------------------------------------------------------
 // Top-of-file tuning: paint detection
 // ---------------------------------------------------------------------------
 // How much brighter the line has to be than the asphalt beside it to count as "paint".
@@ -87,8 +105,10 @@ bool SHOW_LINE_TYPE_DIAGNOSTICS = true; // temporarily on - diagnosing far-lane 
 bool DEBUG_LOG_DECODER_BIAS = true;
 
 // A lane is called SOLID if painted_fraction is above this AND transitions is at or below this.
-float SOLID_MIN_PAINTED_FRACTION = 0.70f;
-int   SOLID_MAX_TRANSITIONS = 8; // effectively "don't care" right now - see comment at the check itself
+float SOLID_MIN_PAINTED_FRACTION = 0.75f; //0.7 was slightly low, caused close dashed lines to be misclassified as solid
+int   SOLID_MAX_TRANSITIONS = 8; // needed after all - closely-spaced dashed lines can rack up
+// enough painted_fraction to clear the SOLID bar on paint alone, and transitions is what still
+// tells them apart from a real solid. Was briefly set to 1000 to test removing it; put back.
 
 // A lane is called DASHED if transitions is at or above this AND painted_fraction falls in this range.
 int   DASHED_MIN_TRANSITIONS = 0; // effectively "don't care" right now - see comment at the check itself
@@ -568,6 +588,28 @@ bool isPaintSample(const cv::Mat& gray, cv::Point2f pt, cv::Point2f* out_seg_a, 
         return max_val;
         };
 
+    // Used only as the fallback when both background probes are clipped - see the comment at
+    // the background reference below. Deliberately NOT used for the normal path: swapping the
+    // background from a max to a median everywhere would lower the reference on every sample,
+    // including the ones sitting in a dash gap, which inflates their contrast and starts
+    // reading gaps as paint. Matching statistics on both terms is what keeps gaps as gaps.
+    auto sampleMedianBrightness = [&](cv::Point2f center, int half_win) {
+        int cx = static_cast<int>(std::round(center.x));
+        int cy = static_cast<int>(std::round(center.y));
+        std::vector<uchar> vals;
+        vals.reserve((2 * half_win + 1) * (2 * half_win + 1));
+        for (int dy = -half_win; dy <= half_win; ++dy) {
+            for (int dx = -half_win; dx <= half_win; ++dx) {
+                int sx = cx + dx, sy = cy + dy;
+                if (sx < 0 || sy < 0 || sx >= gray.cols || sy >= gray.rows) continue;
+                vals.push_back(gray.at<uchar>(sy, sx));
+            }
+        }
+        if (vals.empty()) return 255; // no pixels to judge from - stay conservative
+        std::nth_element(vals.begin(), vals.begin() + vals.size() / 2, vals.end());
+        return static_cast<int>(vals[vals.size() / 2]);
+        };
+
     int line_brightness = 0;
     for (int off = -PAINT_SEARCH_HALF_WIDTH_PX; off <= PAINT_SEARCH_HALF_WIDTH_PX; off += PAINT_SEARCH_STEP_PX) {
         line_brightness = std::max(line_brightness, sampleMaxBrightness(cv::Point2f(pt.x + off, pt.y), 3));
@@ -579,11 +621,50 @@ bool isPaintSample(const cv::Mat& gray, cv::Point2f pt, cv::Point2f* out_seg_a, 
     // drag the reference up, which shrinks measured contrast and reads as "no paint" even
     // directly on real paint. Taking the min means a clean reading on either side is
     // trusted, instead of a bad one on one side poisoning the whole reference.
+    //
+    // ...but min() only rescues the case where ONE side is contaminated. When BOTH sides
+    // read blown-out white the reference pins at ~255, contrast goes to zero or below, and
+    // real paint underneath reads as a gap. That is what speckles the far-left solid line
+    // here: a sunlit concrete gutter runs alongside it, clipping the left probe on
+    // essentially every sample, so the min is really just the right probe - and that one
+    // clips too whenever it lands on a "50" pavement marking, the hood, or a light-coloured
+    // car. Measured over 21275 real samples: on far-left GAP samples the right probe's
+    // median was 255, versus 148 (asphalt) on far-left PAINT samples. The samples were not
+    // marginal - contrast is strongly bimodal, gaps near 0 and paint near 100 - so this was
+    // never a threshold that needed lowering, it was a reference that had stopped measuring
+    // road.
+    //
+    // So: a probe pinned at the sensor ceiling is not a reading of the road, and is dropped.
+    // Note what this does NOT change - if exactly one probe is clipped, min() already
+    // returned the other one, so the result is bit-identical to before. The behaviour only
+    // differs when BOTH are clipped, where the old code was guaranteed to answer "no paint".
+    // That is why this leaves dashed lines alone: measured on the same 21275 samples, the
+    // far-left solid went 78.8% -> 91.9% painted while the two dashed channels moved +0.0%
+    // and +0.1%. A variant that spread more probes per side scored better on the far-left
+    // (96.6%) but pushed the dashed channels up +5.3% and +4.7% - i.e. it started bridging
+    // dash gaps, which is the "close dashes read as SOLID" failure - so it was rejected.
+    const int BG_SATURATED = 250;
     int bg_offset = PAINT_SEARCH_HALF_WIDTH_PX + 30;
-    int bg_brightness = std::min(
-        sampleMaxBrightness(cv::Point2f(pt.x + bg_offset, pt.y), 5),
-        sampleMaxBrightness(cv::Point2f(pt.x - bg_offset, pt.y), 5)
-    );
+    int bg_left = sampleMaxBrightness(cv::Point2f(pt.x - bg_offset, pt.y), 5);
+    int bg_right = sampleMaxBrightness(cv::Point2f(pt.x + bg_offset, pt.y), 5);
+
+    bool left_usable = bg_left < BG_SATURATED;
+    bool right_usable = bg_right < BG_SATURATED;
+
+    int bg_brightness;
+    if (left_usable && right_usable) bg_brightness = std::min(bg_left, bg_right);
+    else if (left_usable)            bg_brightness = bg_left;
+    else if (right_usable)           bg_brightness = bg_right;
+    else {
+        // Both sides clipped. A max over a blown-out window says nothing, but the window is
+        // usually only PARTLY blown out - the edge of a marking, the lip of the hood - so a
+        // median still finds the road pixels in it. Falling back to that is strictly better
+        // than the old behaviour, which was to accept 255 and call real paint a gap.
+        bg_brightness = std::min(
+            sampleMedianBrightness(cv::Point2f(pt.x - bg_offset, pt.y), 5),
+            sampleMedianBrightness(cv::Point2f(pt.x + bg_offset, pt.y), 5)
+        );
+    }
 
     return (line_brightness - bg_brightness) > PAINT_CONTRAST_THRESHOLD;
 }
@@ -795,6 +876,86 @@ int main() {
         return -1;
     }
 
+    // ---------------------------------------------------------------------------
+    // Seeking: one continuous timeline across all the clips
+    // ---------------------------------------------------------------------------
+    // A dashcam chops one continuous drive into fixed-length files, so "skip back 10s" from
+    // 4s into a clip has to land 6s before the END of the previous one - a per-file seek
+    // can't express that. Measuring every clip's duration once up front turns the folder
+    // into a single virtual timeline: seeks are computed in global seconds and then mapped
+    // back to (which clip, how far into it). Durations come from container metadata, so this
+    // costs one cheap open per file at startup and no decoding.
+    struct ClipInfo {
+        std::string path;
+        double fps = 30.0;
+        double duration_sec = 0.0;
+        double global_start_sec = 0.0;
+        bool hood_measured = false;  // cached so jumping between clips doesn't re-run
+        int  hood_cutoff_y = 0;      // calibrateHoodCutoff (~60 frames) on every jump
+    };
+
+    std::vector<ClipInfo> clips;
+    double timeline_total_sec = 0.0;
+    for (const auto& p : video_files) {
+        cv::VideoCapture probe(p);
+        if (!probe.isOpened()) continue;
+        ClipInfo ci;
+        ci.path = p;
+        ci.fps = probe.get(cv::CAP_PROP_FPS);
+        if (ci.fps <= 1.0) ci.fps = 30.0;
+        double n_frames = probe.get(cv::CAP_PROP_FRAME_COUNT);
+        if (n_frames > 1.0) {
+            ci.duration_sec = n_frames / ci.fps;
+        }
+        else {
+            // Container didn't report a frame count - ask the demuxer to jump to the end and
+            // report where it landed. Still metadata-only, no decode.
+            probe.set(cv::CAP_PROP_POS_AVI_RATIO, 1.0);
+            double end_ms = probe.get(cv::CAP_PROP_POS_MSEC);
+            ci.duration_sec = (end_ms > 0.0) ? end_ms / 1000.0 : 0.0;
+        }
+        ci.global_start_sec = timeline_total_sec;
+        timeline_total_sec += ci.duration_sec;
+        if (ci.duration_sec <= 0.0) {
+            std::cout << "[seek] warning: could not determine duration of " << p
+                       << " - seeks will not be able to land inside it" << std::endl;
+        }
+        clips.push_back(ci);
+    }
+    if (clips.empty()) {
+        std::cerr << "Error: none of the MP4 files in " << folder_path << " could be opened." << std::endl;
+        return -1;
+    }
+    std::cout << "[seek] " << clips.size() << " clip(s), " << timeline_total_sec
+               << "s total. Left/Right arrows skip " << SEEK_STEP_SEC << "s, q/ESC quits." << std::endl;
+
+    // Global seconds -> (clip index, offset within that clip). Clamps into range, so seeking
+    // past either end parks at the boundary instead of falling off it. Clips whose duration
+    // is unknown (0) are stepped over rather than landed in.
+    auto globalToClip = [&clips, timeline_total_sec](double global_sec, size_t& out_idx, double& out_offset) {
+        global_sec = std::max(0.0, std::min(global_sec, timeline_total_sec - 0.001));
+        for (size_t i = 0; i < clips.size(); ++i) {
+            bool last = (i + 1 == clips.size());
+            if (global_sec < clips[i].global_start_sec + clips[i].duration_sec || last) {
+                out_idx = i;
+                out_offset = std::max(0.0, global_sec - clips[i].global_start_sec);
+                return;
+            }
+        }
+        out_idx = 0;
+        out_offset = 0.0;
+        };
+
+    // Pacing compares the video's own timeline against wall-clock elapsed since a fixed
+    // origin. After a jump that origin has to move with it, or the very next frame looks
+    // wildly "behind schedule" and the pacer throws away frames trying to catch up to a
+    // position it never actually played.
+    auto pacingOriginFor = [](double offset_sec) {
+        return std::chrono::steady_clock::now()
+            - std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+                std::chrono::duration<double>(offset_sec));
+        };
+
     cv::Mat frame;
     std::vector<float> input_tensor_values;
     cv::namedWindow("UFLD Tracker", cv::WINDOW_AUTOSIZE);
@@ -802,13 +963,27 @@ int main() {
     std::vector<LineTypeHistory> line_type_history(num_lanes);
     std::vector<LaneTemporalState> lane_temporal(num_lanes);
 
-    for (size_t file_idx = 0; file_idx < video_files.size(); ++file_idx) {
-        std::string video_path = video_files[file_idx];
+    // A jump can land in a different clip, so the file loop can't be a plain forward for() -
+    // it has to be able to be sent backwards or skip ahead. pending_seek_offset carries the
+    // landing position into the next iteration when a seek crosses a clip boundary.
+    size_t file_idx = 0;
+    bool arrived_via_seek = false;
+    double pending_seek_offset = 0.0;
+
+    while (file_idx < clips.size()) {
+        std::string video_path = clips[file_idx].path;
         cv::VideoCapture cap(video_path);
 
-        if (!cap.isOpened()) continue;
-        std::cout << "\nPlaying [" << file_idx + 1 << "/" << video_files.size() << "]: " << video_path << std::endl;
+        if (!cap.isOpened()) { file_idx++; arrived_via_seek = false; pending_seek_offset = 0.0; continue; }
+        std::cout << "\nPlaying [" << file_idx + 1 << "/" << clips.size() << "]: " << video_path << std::endl;
         std::fill(lane_temporal.begin(), lane_temporal.end(), LaneTemporalState{}); // reset per file - a new file's first frame has no relevant history
+        if (arrived_via_seek) {
+            // A jump is a scene discontinuity, so the rolling solid/dashed vote must not carry
+            // across it - 15 frames' worth of votes from somewhere else would mislabel the
+            // landing point. Only done for seeks: natural clip-to-clip playback is continuous
+            // footage, and its existing carry-over behaviour is left exactly as it was.
+            for (auto& h : line_type_history) h = LineTypeHistory{};
+        }
 
         // Permanent calibration offset: measured ONCE, by comparing the auto-detected
         // boundary against the last known-good hand-tuned constant this project shipped
@@ -821,17 +996,24 @@ int main() {
         // calibrateHoodCutoff() measurement it's added on top of.
         const int PERMANENT_OFFSET_PX = 41;
 
-        int hood_cutoff_y = calibrateHoodCutoff(video_path);
-        if (hood_cutoff_y < 0) {
-            int fallback_h = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
-            if (fallback_h <= 1) fallback_h = 1080; // last-resort guard if container metadata is unreadable
-            hood_cutoff_y = static_cast<int>(fallback_h * 0.78f);
-            std::cout << "[hood] " << video_path << ": no confident boundary found - using fallback hood_cutoff_y=" << hood_cutoff_y << std::endl;
+        // Cached per clip: seeking back and forth across a boundary would otherwise re-run
+        // this ~60-frame measurement on every crossing, for a result that cannot change.
+        if (!clips[file_idx].hood_measured) {
+            int measured = calibrateHoodCutoff(video_path);
+            if (measured < 0) {
+                int fallback_h = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
+                if (fallback_h <= 1) fallback_h = 1080; // last-resort guard if container metadata is unreadable
+                measured = static_cast<int>(fallback_h * 0.78f);
+                std::cout << "[hood] " << video_path << ": no confident boundary found - using fallback hood_cutoff_y=" << measured << std::endl;
+            }
+            else {
+                measured += PERMANENT_OFFSET_PX;
+                std::cout << "[hood] " << video_path << ": hood_cutoff_y=" << measured << " (auto-detected + " << PERMANENT_OFFSET_PX << "px permanent offset)" << std::endl;
+            }
+            clips[file_idx].hood_measured = true;
+            clips[file_idx].hood_cutoff_y = measured;
         }
-        else {
-            hood_cutoff_y += PERMANENT_OFFSET_PX;
-            std::cout << "[hood] " << video_path << ": hood_cutoff_y=" << hood_cutoff_y << " (auto-detected + " << PERMANENT_OFFSET_PX << "px permanent offset)" << std::endl;
-        }
+        int hood_cutoff_y = clips[file_idx].hood_cutoff_y;
 
         auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 
@@ -843,10 +1025,24 @@ int main() {
         // processes normally, with no artificial cap on how many frames in a row either
         // case can happen. Reset per file so a slow previous clip can't bleed lag into
         // the next one's start.
-        double source_fps = cap.get(cv::CAP_PROP_FPS);
-        if (source_fps <= 1.0) source_fps = 30.0; // sane fallback if the container doesn't report a usable fps
-        auto video_start_time = std::chrono::steady_clock::now();
+        double source_fps = clips[file_idx].fps;
         long long frame_index = 0;
+
+        // Land at the seek target, if we got here by seeking. Read the position back from the
+        // demuxer rather than trusting the requested time: seeking snaps to a keyframe, and
+        // frame_index has to describe where we ACTUALLY are or every derived timestamp below
+        // (pacing, the on-screen clock, the next seek's origin) drifts by the snap distance.
+        if (arrived_via_seek && pending_seek_offset > 0.0) {
+            cap.set(cv::CAP_PROP_POS_MSEC, pending_seek_offset * 1000.0);
+            double landed = cap.get(cv::CAP_PROP_POS_FRAMES);
+            frame_index = (landed > 0.0) ? static_cast<long long>(landed)
+                                          : static_cast<long long>(pending_seek_offset * source_fps);
+        }
+        arrived_via_seek = false;
+        pending_seek_offset = 0.0;
+
+        auto video_start_time = pacingOriginFor(static_cast<double>(frame_index) / source_fps);
+        bool jumped_to_other_clip = false;
 
         while (true) {
             cap >> frame;
@@ -1150,9 +1346,54 @@ int main() {
 
             cv::imshow("UFLD Tracker", frame);
 
-            char key = (char)cv::waitKey(1);
+            // waitKeyEx, not waitKey: the arrow keys are extended codes that live above the
+            // low byte, so the old `(char)cv::waitKey(1)` truncated them away entirely.
+            int key = cv::waitKeyEx(1);
             if (key == 'q' || key == 27) return 0;
+
+            double seek_delta = 0.0;
+            if (isSeekForwardKey(key))   seek_delta = SEEK_STEP_SEC * SEEK_RIGHT_DIRECTION;
+            else if (isSeekBackKey(key)) seek_delta = -SEEK_STEP_SEC * SEEK_RIGHT_DIRECTION;
+
+            if (seek_delta != 0.0) {
+                // video_time_sec is this frame's position within the clip; adding the clip's
+                // own start turns it into a position on the whole-folder timeline, which is
+                // the only frame of reference in which "10 seconds earlier" is well defined
+                // when 10 seconds earlier is in a different file.
+                double global_now = clips[file_idx].global_start_sec + video_time_sec;
+                size_t target_idx = file_idx;
+                double target_offset = 0.0;
+                globalToClip(global_now + seek_delta, target_idx, target_offset);
+
+                std::cout << "[seek] " << (seek_delta > 0 ? "+" : "") << seek_delta << "s -> clip "
+                           << target_idx + 1 << "/" << clips.size() << " at " << target_offset
+                           << "s (global " << (clips[target_idx].global_start_sec + target_offset)
+                           << "s of " << timeline_total_sec << "s)" << std::endl;
+
+                if (target_idx == file_idx) {
+                    // Same clip: seek in place, no need to reopen or re-measure anything.
+                    cap.set(cv::CAP_PROP_POS_MSEC, target_offset * 1000.0);
+                    double landed = cap.get(cv::CAP_PROP_POS_FRAMES);
+                    frame_index = (landed > 0.0) ? static_cast<long long>(landed)
+                                                  : static_cast<long long>(target_offset * source_fps);
+                    video_start_time = pacingOriginFor(static_cast<double>(frame_index) / source_fps);
+                    std::fill(lane_temporal.begin(), lane_temporal.end(), LaneTemporalState{});
+                    for (auto& h : line_type_history) h = LineTypeHistory{};
+                }
+                else {
+                    // Different clip: hand the landing position to the outer loop, which
+                    // reopens there and applies it.
+                    arrived_via_seek = true;
+                    pending_seek_offset = target_offset;
+                    file_idx = target_idx;
+                    jumped_to_other_clip = true;
+                    break;
+                }
+            }
         }
+
+        if (jumped_to_other_clip) continue; // file_idx already points at the clip we jumped to
+        file_idx++;
     }
 
     std::cout << "Successfully processed all available files." << std::endl;
