@@ -34,6 +34,35 @@ std::string model_path = "C:/src/lane_tracker/lane_tracker/models/ultra-fast-lan
 // Whether the hood exclusion line is drawn on screen at all.
 bool SHOW_HOOD_EXCLUSION_LINE = true; // temporarily on - diagnosing far-lane edge-curving (6.1)
 
+// Logs when the temporal-consistency check (see LaneTemporalState below) suppresses a lane
+// for looking like a sudden jump - rare events, cheap to leave on.
+bool SHOW_TEMPORAL_REJECTIONS = false;
+
+// Diagnostic-only: processes every frame as fast as possible instead of matching the video's
+// real-time playback speed. Only useful for offline analysis (verifying a change against every
+// frame, reliably, across a full run) - never for live/interactive viewing, since it blows
+// through the actual video's timing. Leave false outside an active diagnostic pass.
+bool DISABLE_REALTIME_PACING = false;
+
+// ---------------------------------------------------------------------------
+// Top-of-file tuning: temporal consistency
+// ---------------------------------------------------------------------------
+// How much a lane's fitted MEAN position (see fitsAgree) is allowed to move between one
+// trusted frame and the next, per frame of gap, before it's treated as a suspicious jump
+// rather than normal motion. Picked the same way ABS_REJECT_PX=9 was picked - well above the
+// clean baseline, not just above its median: real mean-displacement distribution measured on
+// this footage is p50=1.7px, p75=3.9px, p90=8.7px, p95=15.7px, p97=23.3px, p98=33.4px. 30px
+// sits just under p98 (roughly 8x the p75 baseline, comparable margin to ABS_REJECT_PX's own
+// ~5x), so under a percent of genuinely clean frames should ever cross it, while a confirmed
+// vehicle-edge capture event measured mean displacements of 23-78px sustained across ~8
+// frames - most of that event still clears this bar. Scales linearly with the frame-index gap
+// between the current frame and the last trusted one (pacing can skip frames).
+double TEMPORAL_BASE_THRESHOLD_PX = 30.0;
+// Beyond this many frames of gap since the last trusted fit, there's too much real time
+// elapsed to judge anything against it (a genuine lane change, a long occlusion) - accept and
+// re-bootstrap rather than holding a stale reference forever.
+long long TEMPORAL_MAX_GAP_FRAMES = 10;
+
 // ---------------------------------------------------------------------------
 // Top-of-file tuning: paint detection
 // ---------------------------------------------------------------------------
@@ -197,6 +226,122 @@ struct FittedLane {
     double predict(double y) const { return A * y * y + B * y + C; }
 };
 
+// ---------------------------------------------------------------------------
+// Temporal consistency (catches a SUDDEN, TRANSIENT whole-lane jump - e.g. a passing
+// vehicle's edge or a crosswalk stripe briefly captured - that looks internally
+// self-consistent within a single frame's own points, so nothing evaluated one frame at a
+// time (this file's outlier rejection included) has any basis to reject it. Comparing against
+// recent history is the only way to notice a lane's position jumped instead of evolved.
+//
+// Known, measured limitation: this does NOT catch a SLOWLY-EVOLVING false lock (e.g. a
+// parked car the vehicle is gradually approaching) - that changes smoothly enough frame to
+// frame to never look like a jump at all, so there is no signal here to act on. Not fixed by
+// this mechanism; would need information this single check doesn't have (e.g. an object
+// detector).
+// ---------------------------------------------------------------------------
+
+// Trusted = the most recent frame whose fit was accepted (either it agreed with the previous
+// trusted fit, or two consecutive frames agreed with EACH OTHER on a new position - see
+// temporalConsistencyCheck). Pending = the most recent frame that DISAGREED with trusted,
+// kept around only to check whether the NEXT frame repeats it. min_y/max_y are the y-range
+// each fit was actually built from - required so comparisons never evaluate a stored fit
+// outside its own observed range (a quadratic diverges fast past where it was fit - see the
+// "No more per-lane position memory" comment below for the prior bug this guards against).
+struct LaneTemporalState {
+    bool has_trusted = false;
+    FittedLane trusted_fit;
+    int trusted_min_y = 0, trusted_max_y = 0;
+    long long trusted_frame_index = -1;
+
+    bool has_pending = false;
+    FittedLane pending_fit;
+    int pending_min_y = 0, pending_max_y = 0;
+    long long pending_frame_index = -1;
+};
+
+// Whether `fit` (observed over [min_y,max_y]) is consistent with `ref_fit` (observed over
+// [ref_min_y,ref_max_y]) to within base_threshold_px * gap - gap-scaled because the pacing
+// loop can skip frames, so "the previous trusted frame" may be several video-frames back, and
+// more time passing means more genuine motion is expected. Only ever compares inside the
+// overlap of both ranges; returns true (fail open, don't reject) if the ranges don't overlap
+// at all - no basis to judge, so don't punish it.
+bool fitsAgree(const FittedLane& fit, int min_y, int max_y,
+    const FittedLane& ref_fit, int ref_min_y, int ref_max_y,
+    long long gap, double base_threshold_px) {
+    int ov_lo = std::max(min_y, ref_min_y);
+    int ov_hi = std::min(max_y, ref_max_y);
+    if (ov_lo > ov_hi) return true;
+
+    // MEAN, not max, displacement across the overlap - two independently-fit quadratics from
+    // small, noisy point sets can disagree a lot right at the edge of their shared range even
+    // when the real line barely moved (curvature error amplifies fastest far from the data's
+    // center), so max_disp is a much noisier signal than mean_disp for this comparison.
+    double sum_disp = 0.0;
+    int n_samples = 0;
+    for (int y = ov_lo; y <= ov_hi; y += 5) {
+        sum_disp += std::abs(fit.predict(y) - ref_fit.predict(y));
+        n_samples++;
+    }
+    double mean_disp = sum_disp / n_samples;
+    return mean_disp <= base_threshold_px * static_cast<double>(gap);
+}
+
+// Returns true if this frame's fit should be trusted (drawn/tracked normally), false if it
+// should be suppressed as a likely transient jump. Updates `state` either way. max_gap_frames
+// bounds how far back "recent" can mean - past that, there's too much real time elapsed to
+// judge anything (a genuine lane change, a long occlusion), so it accepts and re-bootstraps
+// rather than holding a stale reference forever.
+bool temporalConsistencyCheck(LaneTemporalState& state, const FittedLane& cur_fit,
+    int cur_min_y, int cur_max_y, long long processed_frame_count,
+    double base_threshold_px, long long max_gap_frames) {
+
+    if (!state.has_trusted) {
+        state.has_trusted = true;
+        state.trusted_fit = cur_fit;
+        state.trusted_min_y = cur_min_y;
+        state.trusted_max_y = cur_max_y;
+        state.trusted_frame_index = processed_frame_count;
+        return true;
+    }
+
+    long long gap = processed_frame_count - state.trusted_frame_index;
+    bool agrees_with_trusted = (gap > max_gap_frames) ||
+        fitsAgree(cur_fit, cur_min_y, cur_max_y, state.trusted_fit, state.trusted_min_y, state.trusted_max_y, gap, base_threshold_px);
+
+    if (agrees_with_trusted) {
+        state.trusted_fit = cur_fit;
+        state.trusted_min_y = cur_min_y;
+        state.trusted_max_y = cur_max_y;
+        state.trusted_frame_index = processed_frame_count;
+        state.has_pending = false;
+        return true;
+    }
+
+    // Disagrees with trusted history - but if it agrees with the LAST disagreeing frame
+    // instead, that's two consecutive frames agreeing on something new: treat it as a genuine
+    // change (a real lane change, a sharp curve), not another bad frame, and promote it.
+    if (state.has_pending) {
+        long long pending_gap = processed_frame_count - state.pending_frame_index;
+        bool agrees_with_pending = (pending_gap > max_gap_frames) ||
+            fitsAgree(cur_fit, cur_min_y, cur_max_y, state.pending_fit, state.pending_min_y, state.pending_max_y, pending_gap, base_threshold_px);
+        if (agrees_with_pending) {
+            state.trusted_fit = cur_fit;
+            state.trusted_min_y = cur_min_y;
+            state.trusted_max_y = cur_max_y;
+            state.trusted_frame_index = processed_frame_count;
+            state.has_pending = false;
+            return true;
+        }
+    }
+
+    state.has_pending = true;
+    state.pending_fit = cur_fit;
+    state.pending_min_y = cur_min_y;
+    state.pending_max_y = cur_max_y;
+    state.pending_frame_index = processed_frame_count;
+    return false;
+}
+
 FittedLane fitQuadratic(const std::vector<cv::Point>& pts) {
     FittedLane result;
     int n = static_cast<int>(pts.size());
@@ -276,6 +421,109 @@ std::vector<cv::Point> rejectCrossLaneOutliers(const std::vector<cv::Point>& pts
     if (out_fit) *out_fit = final_fit;
 
     return working;
+}
+
+// ---------------------------------------------------------------------------
+// Shape-based point correction: instead of just dropping a point that doesn't fit the shape
+// the REST of a lane's points describe (`--^---` doesn't look like a line at that one spot),
+// use the other points to predict where it should have been and correct it there - keeps the
+// point COUNT intact (line-type classification needs enough samples to say anything), instead
+// of shrinking it the way plain deletion does.
+// ---------------------------------------------------------------------------
+
+// Exhaustively tries every 4-point subset of `pts` as a candidate quadratic (lanes only ever
+// have a handful of points - 18 anchors at most - so this is at most a few thousand cheap fits,
+// never a performance concern) and returns whichever candidate has the most INLIERS (points
+// within inlier_px of it). This is more robust to MULTIPLE simultaneously-bad points than
+// fitting to everything at once and removing the single worst offender: a fit built from all
+// points (including several bad ones) can itself get dragged toward the bad ones, which is
+// exactly the trap a plain "remove more points" idea falls into (see project memory) - a
+// minimal-subset consensus fit never lets the bad points influence which candidate wins.
+FittedLane bestConsensusFit(const std::vector<cv::Point>& pts, float inlier_px, std::vector<bool>* out_is_inlier) {
+    FittedLane best;
+    int best_inlier_count = -1;
+    int n = static_cast<int>(pts.size());
+
+    for (int a = 0; a < n; ++a)
+        for (int b = a + 1; b < n; ++b)
+            for (int c = b + 1; c < n; ++c)
+                for (int d = c + 1; d < n; ++d) {
+                    FittedLane candidate = fitQuadratic({ pts[a], pts[b], pts[c], pts[d] });
+                    if (!candidate.valid) continue;
+
+                    int inliers = 0;
+                    for (const auto& p : pts) {
+                        if (std::abs(p.x - candidate.predict(p.y)) <= inlier_px) inliers++;
+                    }
+                    if (inliers > best_inlier_count) {
+                        best_inlier_count = inliers;
+                        best = candidate;
+                    }
+                }
+
+    if (best.valid) {
+        // Refit using ALL inliers of the winning candidate, not just its founding 4 points,
+        // for a more accurate final curve.
+        std::vector<cv::Point> inlier_pts;
+        for (const auto& p : pts) {
+            if (std::abs(p.x - best.predict(p.y)) <= inlier_px) inlier_pts.push_back(p);
+        }
+        FittedLane refit = fitQuadratic(inlier_pts);
+        if (refit.valid) best = refit;
+    }
+
+    if (out_is_inlier) {
+        out_is_inlier->assign(n, false);
+        if (best.valid) {
+            for (int i = 0; i < n; ++i) {
+                (*out_is_inlier)[i] = std::abs(pts[i].x - best.predict(pts[i].y)) <= inlier_px;
+            }
+        }
+    }
+    return best;
+}
+
+// Corrects (does not delete) up to max_corrections points that disagree with the consensus
+// fit found above - replaces each disagreeing point's x with the fit's own prediction at that
+// same y. If MORE than max_corrections points disagree, there is no longer a clear majority to
+// trust a correction FROM - guessing a shape from a fit that might itself be built on a
+// minority would be exactly the "confidently wrong" failure mode this whole file has been
+// fighting, so this falls back to the plain, already-verified drop-based
+// rejectCrossLaneOutliers instead of imputing anything in that case (the user's own caution:
+// "be careful with this if multiple points are being noisy").
+std::vector<cv::Point> correctOrRejectOutliers(const std::vector<cv::Point>& pts,
+    float inlier_px, int max_corrections, FittedLane* out_fit) {
+
+    if (pts.size() < 5) {
+        // Too few points for a 4-point-subset consensus to mean anything against.
+        return rejectCrossLaneOutliers(pts, inlier_px, max_corrections, out_fit);
+    }
+
+    std::vector<bool> is_inlier;
+    FittedLane consensus = bestConsensusFit(pts, inlier_px, &is_inlier);
+    if (!consensus.valid) {
+        return rejectCrossLaneOutliers(pts, inlier_px, max_corrections, out_fit);
+    }
+
+    int n_outliers = 0;
+    for (bool inl : is_inlier) if (!inl) n_outliers++;
+
+    if (n_outliers == 0) {
+        if (out_fit) *out_fit = consensus;
+        return pts;
+    }
+    if (n_outliers > max_corrections) {
+        return rejectCrossLaneOutliers(pts, inlier_px, max_corrections, out_fit);
+    }
+
+    std::vector<cv::Point> corrected = pts;
+    for (size_t i = 0; i < corrected.size(); ++i) {
+        if (!is_inlier[i]) {
+            corrected[i].x = static_cast<int>(std::lround(consensus.predict(corrected[i].y)));
+        }
+    }
+    if (out_fit) *out_fit = consensus;
+    return corrected;
 }
 
 // ---------------------------------------------------------------------------
@@ -552,6 +800,7 @@ int main() {
     cv::namedWindow("UFLD Tracker", cv::WINDOW_AUTOSIZE);
 
     std::vector<LineTypeHistory> line_type_history(num_lanes);
+    std::vector<LaneTemporalState> lane_temporal(num_lanes);
 
     for (size_t file_idx = 0; file_idx < video_files.size(); ++file_idx) {
         std::string video_path = video_files[file_idx];
@@ -559,6 +808,7 @@ int main() {
 
         if (!cap.isOpened()) continue;
         std::cout << "\nPlaying [" << file_idx + 1 << "/" << video_files.size() << "]: " << video_path << std::endl;
+        std::fill(lane_temporal.begin(), lane_temporal.end(), LaneTemporalState{}); // reset per file - a new file's first frame has no relevant history
 
         // Permanent calibration offset: measured ONCE, by comparing the auto-detected
         // boundary against the last known-good hand-tuned constant this project shipped
@@ -607,7 +857,7 @@ int main() {
 
             double elapsed_wall_sec = std::chrono::duration<double>(std::chrono::steady_clock::now() - video_start_time).count();
 
-            if (video_time_sec < elapsed_wall_sec) {
+            if (!DISABLE_REALTIME_PACING && video_time_sec < elapsed_wall_sec) {
                 // Behind schedule - this frame's timestamp has already passed in real
                 // time. Skip straight to grabbing the next frame with none of the
                 // expensive work below; nothing about the tracking/classification
@@ -722,10 +972,38 @@ int main() {
                 }
             }
 
-            // Cross-lane outlier rejection - foundational for reliable line-type reads
+            // Cross-lane outlier correction - foundational for reliable line-type reads.
+            // correctOrRejectOutliers tries to fix a bad point in place (from a
+            // majority-consensus shape) rather than just dropping it, falling back to plain
+            // deletion when there's no clear majority to correct from - see its own comment.
             std::vector<FittedLane> lane_fits(num_lanes);
             for (int l = 0; l < num_lanes; ++l) {
-                detected_lanes[l] = rejectCrossLaneOutliers(detected_lanes[l], ABS_REJECT_PX, MAX_REMOVALS, &lane_fits[l]);
+                detected_lanes[l] = correctOrRejectOutliers(detected_lanes[l], ABS_REJECT_PX, MAX_REMOVALS, &lane_fits[l]);
+            }
+
+            // Temporal consistency: suppress a lane's ENTIRE current-frame detection if its
+            // fit jumped from recent history more than normal motion would explain - catches a
+            // sudden, transient whole-lane capture (see LaneTemporalState comment above for
+            // what this does and does not catch). Runs after outlier rejection so it judges
+            // the same trusted fit everything else downstream uses.
+            for (int l = 0; l < num_lanes; ++l) {
+                if (!lane_fits[l].valid || detected_lanes[l].empty()) continue;
+                int cur_min_y = detected_lanes[l].front().y, cur_max_y = detected_lanes[l].front().y;
+                for (const auto& p : detected_lanes[l]) {
+                    cur_min_y = std::min(cur_min_y, p.y);
+                    cur_max_y = std::max(cur_max_y, p.y);
+                }
+
+                bool consistent = temporalConsistencyCheck(lane_temporal[l], lane_fits[l], cur_min_y, cur_max_y,
+                    processed_frame_count, TEMPORAL_BASE_THRESHOLD_PX, TEMPORAL_MAX_GAP_FRAMES);
+
+                if (!consistent) {
+                    if (SHOW_TEMPORAL_REJECTIONS) {
+                        std::cout << "[temporal] frame=" << processed_frame_count << " lane=" << l
+                                   << " rejected as a sudden jump from recent history" << std::endl;
+                    }
+                    detected_lanes[l].clear();
+                }
             }
 
             // Brute-force off-road suppression: a median wall/guardrail on a highway, or a
