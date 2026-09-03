@@ -31,6 +31,81 @@ std::string model_path = "C:/src/lane_tracker/lane_tracker/models/ultra-fast-lan
 // two consumers, just measured per-video instead of hand-typed.
 // ---------------------------------------------------------------------------
 
+// Where the model's input band is anchored. The band's height is locked to the model's
+// aspect ratio (raw_w * 288/800), so the only free choice is where its BOTTOM edge sits.
+// Anchoring it to the frame bottom spends the lowest rows of the network's input - and
+// every CULane row anchor that lands in them - on car bodywork. Measured on 1336x750
+// highway footage: 4 of 18 row anchors fell at or below the hood line and were discarded
+// on every frame, while 75 rows of plainly visible road sat ABOVE the topmost anchor with
+// nothing to predict them (topmost anchor row 471, vanishing point row 396). Anchoring to
+// the hood's leading edge instead slides the whole anchor ladder up onto road.
+// Set false to restore the previous frame-bottom anchoring.
+bool CROP_ANCHOR_TO_HOOD = true;
+
+// ---------------------------------------------------------------------------
+// Far-field gate: the horizon-side twin of the hood cutoff.
+// ---------------------------------------------------------------------------
+// The 18 CULane row anchors are fixed in the MODEL's coordinates, so the only thing this
+// code can choose is where the ladder lands (CROP_ANCHOR_TO_HOOD above). It cannot make
+// the ladder shorter. Wherever the ladder is placed, its topmost rungs can end up close
+// enough to the vanishing point that a dashed line's gaps project to under a pixel and
+// the line reads as continuous - measured on original_dashcam, points ~29 rows below the
+// horizon pushed the DASHED median painted fraction from 0.486 to 0.552 and cost 1.8
+// points of line-type accuracy. Those points are also where the tracked position is
+// least trustworthy, since a whole lane's worth of road collapses into a few rows.
+//
+// So: measure the vanishing point per clip and drop points above it by a margin. The
+// margin scales with frame height because the same physical distance occupies
+// proportionally fewer rows on a shorter frame.
+bool  ENABLE_FAR_GATE = true;
+float HORIZON_MARGIN_FRAC = 0.03f;   // of frame height, below the measured horizon
+
+// How many per-frame vanishing-point estimates to collect before locking one in. The
+// estimate is a median, so this only has to be enough to outvote the frames where a
+// curve or a lane change skews a single reading.
+int HORIZON_CALIB_SAMPLES = 90;
+
+// Whether anchoring the band to the hood is the right call for THIS camera.
+// The anchor ladder is a fixed 166 of the model's 288 input rows, which works out to
+// 166 * raw_w / 800 native rows - a property of the camera, not of the road. The road
+// band it has to cover is horizon..hood. When the two are comparable the ladder can sit
+// on the road with nothing wasted, and anchoring to the hood is strictly better. When the
+// ladder is much taller than the road band it cannot fit either way, and anchoring to the
+// hood spends the excess ABOVE the horizon, where points are kept and wrong, instead of
+// below the hood, where they were simply gated away. Measured: highway 277 vs 267 rows
+// (ratio 1.04, anchoring helps a lot); original_dashcam 398 vs 215 (ratio 1.85, anchoring
+// costs 1.5 points of line-type accuracy). 1.3 sits in the gap between those two cases.
+float LADDER_FIT_MAX_RATIO = 1.3f;
+
+// ---------------------------------------------------------------------------
+// Classification trim: which PART of the chain is allowed to vote on line type.
+// ---------------------------------------------------------------------------
+// Tracking wants the longest chain it can get. Classification does not. Measured on the
+// highway clip, paint-call rate by position along the road band, on stretches known to be
+// solid versus the ego-right line which is dashed 99% of the time:
+//
+//   position    solid   dashed   separation
+//   0.12-0.25   96.6%    76.7%     19.9    dashes stop resolving; both read 'paint'
+//   0.38-0.50   90.2%    41.5%     48.7    <- best
+//   0.88-1.00   57.0%    22.2%     34.8    near field dims; real paint reads as gap
+//
+// The two ends fail for opposite reasons. Near the horizon the +/-10px sampling window
+// spans a whole dash cycle, so its max always lands on paint. Near the hood the line
+// itself dims (line term falls 213 -> 194 while the background holds) so paint reads as
+// gap.
+//
+// The trim is a fraction of the CHAIN's own extent, not of the horizon-to-hood band. That
+// distinction is load-bearing: a band-relative trim was tried first and cost 7 points of
+// in-domain accuracy, because on that camera the chain only occupies the near part of the
+// road band, so 'drop the near quarter of the band' threw away the good end of the chain.
+// Chain-relative behaves the same wherever the chain happens to sit.
+//
+// Measured margin on the highway clip (true-solid called SOLID, minus true-dashed called
+// SOLID): 37.4 untrimmed, 52.4 at 0.15/0.15, 59.7 at 0.25/0.25, 60.4 here.
+// Set either to 0 to disable trimming at that end.
+float CLASSIFY_TRIM_FAR = 0.10f;    // fraction of the chain dropped at the horizon end
+float CLASSIFY_TRIM_NEAR = 0.20f;   // fraction of the chain dropped at the hood end
+
 // Whether the hood exclusion line is drawn on screen at all.
 bool SHOW_HOOD_EXCLUSION_LINE = true; // temporarily on - diagnosing far-lane edge-curving (6.1)
 
@@ -106,7 +181,13 @@ bool DEBUG_LOG_DECODER_BIAS = true;
 
 // A lane is called SOLID if painted_fraction is above this AND transitions is at or below this.
 float SOLID_MIN_PAINTED_FRACTION = 0.75f; //0.7 was slightly low, caused close dashed lines to be misclassified as solid
-int   SOLID_MAX_TRANSITIONS = 8; // needed after all - closely-spaced dashed lines can rack up
+// Rescaled from 8 when CLASSIFY_TRIM was introduced. The trim keeps about 70% of the
+// samples it used to, which cuts a dashed line's transition count in proportion and was
+// letting far more dashed frames clear a cap of 8 - i.e. the gate had quietly stopped
+// doing its job. Note the direction: 4 is STRICTER than 8, so the closely-spaced-dashed
+// case this gate exists for is protected, not weakened. Measured on true-dashed frames
+// under the trim: false SOLID 1.6% at 4, with true-solid detection 62.0%.
+int   SOLID_MAX_TRANSITIONS = 4; // closely-spaced dashed lines can rack up
 // enough painted_fraction to clear the SOLID bar on paint alone, and transitions is what still
 // tells them apart from a real solid. Was briefly set to 1000 to test removing it; put back.
 
@@ -115,13 +196,28 @@ int   DASHED_MIN_TRANSITIONS = 0; // effectively "don't care" right now - see co
 float DASHED_MIN_PAINTED_FRACTION = 0.15f;
 float DASHED_MAX_PAINTED_FRACTION = 0.75f;
 
-// Pre-processes frame: Applies CULane aspect ratio crop, resizes, and normalizes
-int preProcessFrame(const cv::Mat& src_frame, std::vector<float>& input_tensor_values, int target_w, int target_h) {
+// Pre-processes frame: Applies CULane aspect ratio crop, resizes, and normalizes.
+// road_bottom_y is where usable road ends (the hood's leading edge); pass <=0 to keep the
+// old frame-bottom anchoring. The crop's HEIGHT is written to out_crop_h: the decoder needs
+// it to map row anchors back to native pixels, and it is no longer (raw_h - crop_y) now
+// that the band can sit clear of the frame bottom.
+int preProcessFrame(const cv::Mat& src_frame, std::vector<float>& input_tensor_values,
+                    int target_w, int target_h, int road_bottom_y, int* out_crop_h) {
     int raw_w = src_frame.cols;
     int raw_h = src_frame.rows;
 
     int crop_h = static_cast<int>(raw_w * (static_cast<float>(target_h) / static_cast<float>(target_w)));
-    int crop_y = std::max(0, raw_h - crop_h);
+    if (crop_h > raw_h) crop_h = raw_h;   // very wide/short source: cannot honour the aspect
+
+    // See CROP_ANCHOR_TO_HOOD at the top of the file for why the bottom edge is placed here.
+    int bottom = raw_h;
+    if (CROP_ANCHOR_TO_HOOD && road_bottom_y > 0 && road_bottom_y <= raw_h) bottom = road_bottom_y;
+
+    int crop_y = bottom - crop_h;
+    if (crop_y < 0) crop_y = 0;
+    if (crop_y + crop_h > raw_h) crop_y = raw_h - crop_h;
+
+    if (out_crop_h) *out_crop_h = crop_h;
     cv::Rect roi(0, crop_y, raw_w, crop_h);
     cv::Mat cropped_frame = src_frame(roi);
 
@@ -689,6 +785,29 @@ LineTypeResult classifyLineType(const cv::Mat& gray, std::vector<cv::Point> pts,
 
     std::sort(pts.begin(), pts.end(), [](const cv::Point& a, const cv::Point& b) { return a.y < b.y; });
 
+    // Drop the ends that cannot tell solid from dashed - see CLASSIFY_TRIM_FAR/NEAR at the
+    // top of the file. Tracking, fitting, the temporal check and the on-screen dots all
+    // still use the whole chain; this trim is local to the verdict. Skipped when it would
+    // leave too little to judge from, since classifying a compromised span beats not
+    // classifying at all.
+    if ((CLASSIFY_TRIM_FAR > 0.0f || CLASSIFY_TRIM_NEAR > 0.0f) && pts.size() >= 6) {
+        int y_far = pts.front().y, y_near = pts.back().y;   // sorted by y, so far end first
+        float span = static_cast<float>(y_near - y_far);
+        if (span > 1.0f) {
+            int lo = y_far + static_cast<int>(CLASSIFY_TRIM_FAR * span);
+            int hi = y_near - static_cast<int>(CLASSIFY_TRIM_NEAR * span);
+            std::vector<cv::Point> kept;
+            kept.reserve(pts.size());
+            for (const auto& q : pts) {
+                if (q.y >= lo && q.y <= hi) kept.push_back(q);
+            }
+            // n_points deliberately NOT updated: it is what the on-screen label reports,
+            // and it should keep describing the chain the dots actually show. The count
+            // that was classified is visible in n_samples.
+            if (kept.size() >= 3) pts.swap(kept);
+        }
+    }
+
     std::vector<bool> samples;
     const float STEP = 3.0f;
 
@@ -892,6 +1011,10 @@ int main() {
         double global_start_sec = 0.0;
         bool hood_measured = false;  // cached so jumping between clips doesn't re-run
         int  hood_cutoff_y = 0;      // calibrateHoodCutoff (~60 frames) on every jump
+        int  hood_raw_y = 0;         // the SAME measurement without PERMANENT_OFFSET_PX
+        bool horizon_measured = false;
+        int  horizon_y = 0;          // vanishing point, from ego-lane fits (see far gate)
+        int  crop_bottom_y = 0;      // 0 = frame bottom; set once the ladder fit is known
     };
 
     std::vector<ClipInfo> clips;
@@ -1000,20 +1123,48 @@ int main() {
         // this ~60-frame measurement on every crossing, for a result that cannot change.
         if (!clips[file_idx].hood_measured) {
             int measured = calibrateHoodCutoff(video_path);
+            int raw_edge;
             if (measured < 0) {
                 int fallback_h = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
                 if (fallback_h <= 1) fallback_h = 1080; // last-resort guard if container metadata is unreadable
                 measured = static_cast<int>(fallback_h * 0.78f);
+                raw_edge = measured;
                 std::cout << "[hood] " << video_path << ": no confident boundary found - using fallback hood_cutoff_y=" << measured << std::endl;
             }
             else {
+                // Two different jobs, so two different rows. PERMANENT_OFFSET_PX is a
+                // correction for THIS detector being conservative on the original_dashcam
+                // camera; it is a camera-specific fudge, not a geometric property, so it is
+                // kept only on the point gate where it was calibrated. The crop is anchored
+                // to the detector's own reading, which was checked by eye against two
+                // timestamps of the 750-row highway footage and lands exactly on the hood's
+                // leading edge there.
+                raw_edge = measured;
                 measured += PERMANENT_OFFSET_PX;
-                std::cout << "[hood] " << video_path << ": hood_cutoff_y=" << measured << " (auto-detected + " << PERMANENT_OFFSET_PX << "px permanent offset)" << std::endl;
+                std::cout << "[hood] " << video_path << ": hood_cutoff_y=" << measured << " (auto-detected " << raw_edge << " + " << PERMANENT_OFFSET_PX << "px permanent offset)" << std::endl;
             }
             clips[file_idx].hood_measured = true;
             clips[file_idx].hood_cutoff_y = measured;
+            clips[file_idx].hood_raw_y = raw_edge;
         }
         int hood_cutoff_y = clips[file_idx].hood_cutoff_y;
+        int hood_raw_y = clips[file_idx].hood_raw_y;
+
+        // Far gate state for this clip. Until enough samples are in, far_cutoff_y stays 0
+        // and the gate is inert - the first ~3 seconds run exactly as they did before, and
+        // are also what the estimate is built from.
+        std::vector<int> horizon_samples;
+        int far_cutoff_y = 0;
+        // 0 until the horizon is known, which means the frame-bottom anchoring the project
+        // shipped with. The first ~3 seconds of a clip therefore behave exactly as before,
+        // and are what the decision is made from.
+        int crop_bottom_y = clips[file_idx].crop_bottom_y;
+        if (clips[file_idx].horizon_measured && ENABLE_FAR_GATE) {
+            int gate_frame_h = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
+            if (gate_frame_h <= 1) gate_frame_h = 1080;
+            far_cutoff_y = clips[file_idx].horizon_y +
+                static_cast<int>(HORIZON_MARGIN_FRAC * static_cast<float>(gate_frame_h));
+        }
 
         auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 
@@ -1071,8 +1222,9 @@ int main() {
 
             auto frame_perf_start = std::chrono::steady_clock::now();
 
-            int crop_y = preProcessFrame(frame, input_tensor_values, model_input_w, model_input_h);
-            int crop_h = frame.rows - crop_y;
+            int crop_h = 0;
+            int crop_y = preProcessFrame(frame, input_tensor_values, model_input_w, model_input_h,
+                                         crop_bottom_y, &crop_h);
 
             std::vector<int64_t> current_input_dims = { 1, 3, model_input_h, model_input_w };
             Ort::Value input_tensor = Ort::Value::CreateTensor<float>(
@@ -1163,8 +1315,77 @@ int main() {
                     int native_y = static_cast<int>(model_y * scale_y) + crop_y;
 
                     if (native_y >= hood_cutoff_y) continue; // never trust/sample points on the hood
+                    if (far_cutoff_y > 0 && native_y < far_cutoff_y) continue; // too near the horizon
 
                     detected_lanes[l].push_back(cv::Point(native_x, native_y));
+                }
+            }
+
+            // Vanishing point for the far gate. Least-squares x = m*y + c over each ego
+            // channel's whole chain, then intersect the two lines. A least-squares fit over
+            // 14-16 points shrugs off the couple of noisy far points that a chord through
+            // the chain's extremes would be entirely at the mercy of. Only runs while the
+            // estimate is still being built, so it costs nothing afterwards.
+            if (ENABLE_FAR_GATE && !clips[file_idx].horizon_measured &&
+                detected_lanes[1].size() >= 5 && detected_lanes[2].size() >= 5) {
+                auto fitLine = [](const std::vector<cv::Point>& pts, double& m, double& c) {
+                    double sy = 0, sx = 0, syy = 0, sxy = 0;
+                    double n = static_cast<double>(pts.size());
+                    for (const auto& q : pts) {
+                        sy += q.y; sx += q.x; syy += static_cast<double>(q.y) * q.y;
+                        sxy += static_cast<double>(q.x) * q.y;
+                    }
+                    double den = n * syy - sy * sy;
+                    if (std::abs(den) < 1e-9) return false;
+                    m = (n * sxy - sx * sy) / den;
+                    c = (sx - m * sy) / n;
+                    return true;
+                    };
+                double m1, c1, m2, c2;
+                if (fitLine(detected_lanes[1], m1, c1) && fitLine(detected_lanes[2], m2, c2) &&
+                    std::abs(m1 - m2) > 1e-6) {
+                    double vy = (c2 - c1) / (m1 - m2);
+                    // A sane vanishing point is above every tracked point and inside the frame.
+                    if (vy > 0 && vy < static_cast<double>(frame.rows)) {
+                        horizon_samples.push_back(static_cast<int>(vy));
+                    }
+                }
+                if (static_cast<int>(horizon_samples.size()) >= HORIZON_CALIB_SAMPLES) {
+                    std::nth_element(horizon_samples.begin(),
+                                     horizon_samples.begin() + horizon_samples.size() / 2,
+                                     horizon_samples.end());
+                    int h_y = horizon_samples[horizon_samples.size() / 2];
+                    clips[file_idx].horizon_y = h_y;
+                    clips[file_idx].horizon_measured = true;
+                    far_cutoff_y = h_y + static_cast<int>(HORIZON_MARGIN_FRAC * static_cast<float>(frame.rows));
+                    std::cout << "[horizon] " << video_path << ": vanishing point y=" << h_y
+                              << ", far gate at y=" << far_cutoff_y << " (" << HORIZON_MARGIN_FRAC
+                              << " x " << frame.rows << " rows below it)" << std::endl;
+
+                    // Now that the road band is known, decide where the band's bottom edge
+                    // belongs. See LADDER_FIT_MAX_RATIO. Changing it mid-clip moves every
+                    // tracked point at once, which is exactly the kind of jump the temporal
+                    // check exists to reject, so the smoothing state is reset with it.
+                    float ladder_h = 166.0f * static_cast<float>(frame.cols) / 800.0f;
+                    int   road_band = hood_raw_y - h_y;
+                    if (CROP_ANCHOR_TO_HOOD && road_band > 0 &&
+                        ladder_h <= LADDER_FIT_MAX_RATIO * static_cast<float>(road_band)) {
+                        clips[file_idx].crop_bottom_y = hood_raw_y;
+                        std::cout << "[crop] ladder " << static_cast<int>(ladder_h) << " rows vs road band "
+                                  << road_band << " (ratio " << (ladder_h / road_band)
+                                  << ") - anchoring the band to the hood edge at y=" << hood_raw_y << std::endl;
+                    }
+                    else {
+                        clips[file_idx].crop_bottom_y = frame.rows;
+                        std::cout << "[crop] ladder " << static_cast<int>(ladder_h) << " rows vs road band "
+                                  << road_band << " (ratio " << (road_band > 0 ? ladder_h / road_band : 0.0f)
+                                  << ") - ladder does not fit, keeping the frame-bottom anchor" << std::endl;
+                    }
+                    if (crop_bottom_y != clips[file_idx].crop_bottom_y) {
+                        crop_bottom_y = clips[file_idx].crop_bottom_y;
+                        for (auto& h : line_type_history) h = LineTypeHistory{};
+                        for (auto& t : lane_temporal) t = LaneTemporalState{};
+                    }
                 }
             }
 
@@ -1250,6 +1471,15 @@ int main() {
                 stables[l] = line_type_history[l].stable();
 
                 if (DEBUG_SHOW_PAINT_SAMPLES) {
+                    // Neutral spine along the WHOLE chain, drawn before the paint bars so
+                    // they cover it wherever classification actually ran. Without it the
+                    // trimmed ends (see CLASSIFY_TRIM_FAR/NEAR) read as the tracker having
+                    // given up there, when those points are still tracked, still fitted and
+                    // still drawn - they are only barred from voting on line type.
+                    for (size_t p = 0; p + 1 < points_for_display[l].size(); ++p) {
+                        cv::line(overlay, points_for_display[l][p], points_for_display[l][p + 1],
+                                 COLOR_TRACKING_DOT, 3, cv::LINE_AA);
+                    }
                     for (const auto& s : debug_samples) {
                         cv::Point2f seg_a, seg_b; bool is_paint;
                         std::tie(seg_a, seg_b, is_paint) = s;
