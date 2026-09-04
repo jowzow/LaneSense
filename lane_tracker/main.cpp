@@ -54,11 +54,85 @@ bool CROP_ANCHOR_TO_HOOD = true;
 // points of line-type accuracy. Those points are also where the tracked position is
 // least trustworthy, since a whole lane's worth of road collapses into a few rows.
 //
-// So: measure the vanishing point per clip and drop points above it by a margin. The
-// margin scales with frame height because the same physical distance occupies
-// proportionally fewer rows on a shorter frame.
+// So: measure the vanishing point per clip and stop tracking short of it.
 bool  ENABLE_FAR_GATE = true;
+
+// How far up the road tracking is allowed to reach, measured in the road's own ruler:
+// the width of the ego lane, in pixels, at that row. For a flat road that width is
+// A * (row - vanishing point), where A is lane width over camera height - the focal
+// length cancels out completely, so A is a property of the mounting, not the lens.
+// Measured A is 2.79 on the highway camera and 2.54-2.88 across the four
+// original_dashcam clips, and extrapolating each clip's lane width back to zero
+// reproduces its separately measured vanishing point to within a row or two. Frame
+// height, which this margin used to be a fraction of, is not a property of the road at
+// all: the same 3% meant a 63px-wide lane on one camera and a 92px-wide lane on the
+// other, for no reason connected to either road.
+//
+// The limit is self-selecting. Highway chains reach a lane width of 101px; the
+// original_dashcam chains stop at 207px and never come near it. So one number can bind
+// on the camera that over-reaches and stay inert on the one that does not, without
+// being told which is which.
+//
+// 63 reproduces the reach the frame-height margin gave on the highway clip, and the
+// evidence does not support pulling the ego channels in any further: measured
+// paint-on-line rates hold flat on both of them down to a lane width of 80px. The
+// far-left and far-right channels DO fall apart below about 160px - 45% and 40% of
+// their samples land on paint there, against a 60%+ plateau further down the road - so
+// 160 is the setting to reach for if those two need shortening. It costs about 4 points
+// of solid-line recall on the ego channels, which share the limit.
+float MIN_LANE_WIDTH_PX = 63.0f;
+
+// Fallback only, for footage where the ego fits never yield a usable A.
 float HORIZON_MARGIN_FRAC = 0.03f;   // of frame height, below the measured horizon
+
+// A outside this range means the two ego fits were not measuring a lane: a lane change
+// or a fork mid-calibration, or one channel locked onto a barrier. Any dashcam that can
+// see its own lane lands near 2.2-3.1, so well outside that is a bad fit rather than an
+// unusual car, and the frame-height fallback is the safer answer.
+// How wide to search sideways for the painted line, as a fraction of the ego lane width
+// at that row - so the search covers the same slice of road everywhere instead of the
+// same number of pixels. A flat PAINT_SEARCH_HALF_WIDTH_PX is a third of a lane far away
+// and narrower than the stripe itself close up, which is what made real paint on a solid
+// line read as gap in the near field (paint-call rate 96.6% at the far end of a chain,
+// 57.0% at the near end, on stretches known to be solid).
+//
+// 0.035 puts the search at about +/-26px where the lane is 740px wide, comfortably wider
+// than a 0.15m stripe there, and at about +/-4px where the lane is 120px wide. It does not
+// cost dashed lines anything: a dash gap has no paint within reach at any width. Measured
+// against a flat search, with the near-end vote exclusion removed in the same step: all
+// four known-solid stretches on the highway score higher (83.8/78.9/92.8/96.2% against
+// 81.6/67.9/91.7/88.7%), false SOLID on the two dashed channels falls, and in-domain
+// accuracy returns to 97.7% from 95.3%.
+//
+// Set to 0 to restore the flat search.
+float PAINT_SEARCH_WIDTH_FRAC = 0.035f;
+int   PAINT_SEARCH_MIN_HALF_PX = 3;    // never so narrow that a 1px wobble misses
+int   PAINT_SEARCH_MAX_HALF_PX = 30;   // never so wide it can reach a neighbouring line
+
+// Clear distance between the edge of the line search and the background probe. This used
+// to be folded into a single 40px offset from the tracked point; it is separate now
+// because the search width moves and the background must stay outside it. Held at 30 to
+// keep the background reference itself unchanged - it is the delicate term in this
+// function (see the note on clipped probes below), and pinning it while the search width
+// varied is what attributed the improvement to the search rather than to the reference.
+int   PAINT_BG_GAP_PX = 30;
+
+// Set once per clip from the same calibration that fixes the far gate, and read by
+// isPaintSample, which has no other route to the road's scale. Zero until the clip has
+// calibrated, which is what keeps its first seconds on the flat search.
+float g_lane_px_per_row = 0.0f;
+int   g_horizon_y = 0;
+
+float LANE_SLOPE_MIN = 1.5f;
+float LANE_SLOPE_MAX = 5.0f;
+
+// Both places that set the gate agree on this, including the one that runs on a clip
+// whose scale was already measured on an earlier visit.
+int farCutoffRow(int horizon_y, float lane_px_per_row, int frame_h) {
+    if (lane_px_per_row >= LANE_SLOPE_MIN && lane_px_per_row <= LANE_SLOPE_MAX)
+        return horizon_y + static_cast<int>(MIN_LANE_WIDTH_PX / lane_px_per_row);
+    return horizon_y + static_cast<int>(HORIZON_MARGIN_FRAC * static_cast<float>(frame_h));
+}
 
 // How many per-frame vanishing-point estimates to collect before locking one in. The
 // estimate is a median, so this only has to be enough to outvote the frames where a
@@ -78,33 +152,39 @@ int HORIZON_CALIB_SAMPLES = 90;
 float LADDER_FIT_MAX_RATIO = 1.3f;
 
 // ---------------------------------------------------------------------------
-// Classification trim: which PART of the chain is allowed to vote on line type.
+// Classification window: which PART of the chain gets a vote on line type.
 // ---------------------------------------------------------------------------
-// Tracking wants the longest chain it can get. Classification does not. Measured on the
-// highway clip, paint-call rate by position along the road band, on stretches known to be
-// solid versus the ego-right line which is dashed 99% of the time:
+// Both ends are counted now, so this is inert. It is kept as a tunable because the
+// mechanism was load-bearing until the paint sampler stopped being scale-blind, and
+// because the shape of the failure it worked around is worth recording.
 //
-//   position    solid   dashed   separation
-//   0.12-0.25   96.6%    76.7%     19.9    dashes stop resolving; both read 'paint'
-//   0.38-0.50   90.2%    41.5%     48.7    <- best
-//   0.88-1.00   57.0%    22.2%     34.8    near field dims; real paint reads as gap
+// The near end used to be excluded. Approaching the camera the line term fell (213 -> 194
+// on the highway clip) while the background held, so real paint on a solid line read as
+// gap: over stretches known to be solid, the paint-call rate was 96.6% at the far end of
+// the chain against 57.0% at the near end, which dragged solid lines under
+// SOLID_MIN_PAINTED_FRACTION. Excluding the near fifth bought 8 points of solid-line
+// recall on the highway and cost 2.4 points of in-domain accuracy.
 //
-// The two ends fail for opposite reasons. Near the horizon the +/-10px sampling window
-// spans a whole dash cycle, so its max always lands on paint. Near the hood the line
-// itself dims (line term falls 213 -> 194 while the background holds) so paint reads as
-// gap.
+// It is not needed any more, and it was never the right fix. That collapse was the search
+// for the line being a flat +/-10px wide while the painted stripe near the camera is
+// wider than that - see PAINT_SEARCH_WIDTH_FRAC. With the search scaled to the road, the
+// near end reads correctly, and excluding it only throws away good samples: measured with
+// the window off and the scaled search on, every known-solid stretch on the highway scores
+// HIGHER than it did with the window on, and in-domain accuracy returns to 97.7%.
 //
-// The trim is a fraction of the CHAIN's own extent, not of the horizon-to-hood band. That
-// distinction is load-bearing: a band-relative trim was tried first and cost 7 points of
-// in-domain accuracy, because on that camera the chain only occupies the near part of the
-// road band, so 'drop the near quarter of the band' threw away the good end of the chain.
-// Chain-relative behaves the same wherever the chain happens to sit.
+// The far end was excluded too, on the theory that unresolvable dashes read as paint there
+// - they do, 76.7% against a 41.5% chain average - but replaying every labelled chain on
+// both cameras shows it changes almost no verdicts, because the far end is too small a
+// share of the samples to push a dashed line over the SOLID cut.
 //
-// Measured margin on the highway clip (true-solid called SOLID, minus true-dashed called
-// SOLID): 37.4 untrimmed, 52.4 at 0.15/0.15, 59.7 at 0.25/0.25, 60.4 here.
-// Set either to 0 to disable trimming at that end.
-float CLASSIFY_TRIM_FAR = 0.10f;    // fraction of the chain dropped at the horizon end
-float CLASSIFY_TRIM_NEAR = 0.20f;   // fraction of the chain dropped at the hood end
+// If either is ever re-enabled: the fraction is of the CHAIN's own extent, not of the
+// horizon-to-hood band. That distinction is load-bearing - a band-relative version was
+// tried and cost 7 points of in-domain accuracy, because on that camera the chain only
+// occupies the near part of the road band, so 'drop the near quarter of the band' threw
+// away the good end of the chain. Whatever is excluded is still sampled and still drawn;
+// only the vote is restricted.
+float CLASSIFY_TRIM_FAR = 0.0f;     // fraction of the chain not counted at the horizon end
+float CLASSIFY_TRIM_NEAR = 0.0f;    // fraction of the chain not counted at the hood end
 
 // Whether the hood exclusion line is drawn on screen at all.
 bool SHOW_HOOD_EXCLUSION_LINE = true; // temporarily on - diagnosing far-lane edge-curving (6.1)
@@ -181,13 +261,22 @@ bool DEBUG_LOG_DECODER_BIAS = true;
 
 // A lane is called SOLID if painted_fraction is above this AND transitions is at or below this.
 float SOLID_MIN_PAINTED_FRACTION = 0.75f; //0.7 was slightly low, caused close dashed lines to be misclassified as solid
-// Rescaled from 8 when CLASSIFY_TRIM was introduced. The trim keeps about 70% of the
-// samples it used to, which cuts a dashed line's transition count in proportion and was
-// letting far more dashed frames clear a cap of 8 - i.e. the gate had quietly stopped
-// doing its job. Note the direction: 4 is STRICTER than 8, so the closely-spaced-dashed
-// case this gate exists for is protected, not weakened. Measured on true-dashed frames
-// under the trim: false SOLID 1.6% at 4, with true-solid detection 62.0%.
-int   SOLID_MAX_TRANSITIONS = 4; // closely-spaced dashed lines can rack up
+// A rate, not a count. An absolute cap silently changes meaning whenever the number of
+// samples in a chain changes - it had to be rescaled from 8 to 4 when the classification
+// window was introduced, and would need rescaling again for any camera whose chains are
+// longer or shorter. A solid line has near-zero transitions however long it is; a dashed
+// line has two per dash cycle, so both scale with chain length and a rate does not drift.
+//
+// This gate is a backstop, not a discriminator. Measured on chains that clear the SOLID
+// painted-fraction cut, the transition rate of true-dashed and true-solid chains overlaps
+// almost completely (highway medians 0.043 against 0.029, 90th percentiles 0.080 against
+// 0.078), so any setting tight enough to reject those dashed chains rejects a comparable
+// share of real solids: 0.06 costs 5 points of solid recall to gain 1 of dashed. 0.11 is
+// above both distributions and rejects ~2% of each, which leaves it doing the one job it
+// is actually good at - catching a closely-spaced dashed line, whose short dash cycle
+// puts its rate far above anything a real solid line reaches.
+float SOLID_MAX_TRANSITION_RATE = 0.11f;   // transitions per counted sample
+int   SOLID_MIN_TRANSITION_ALLOWANCE = 3;  // floor, so a short chain can still read SOLID
 // enough painted_fraction to clear the SOLID bar on paint alone, and transitions is what still
 // tells them apart from a real solid. Was briefly set to 1000 to test removing it; put back.
 
@@ -667,8 +756,23 @@ bool isPaintSample(const cv::Mat& gray, cv::Point2f pt, cv::Point2f* out_seg_a, 
     int y = static_cast<int>(std::round(pt.y));
     if (x < 2 || y < 2 || x >= gray.cols - 2 || y >= gray.rows - 2) return false;
 
-    if (out_seg_a) *out_seg_a = cv::Point2f(pt.x - PAINT_SEARCH_HALF_WIDTH_PX, pt.y);
-    if (out_seg_b) *out_seg_b = cv::Point2f(pt.x + PAINT_SEARCH_HALF_WIDTH_PX, pt.y);
+    // Falls back to the flat search, step included, whenever the clip has no measured
+    // scale yet or the scaling is turned off - so PAINT_SEARCH_HALF_WIDTH_PX and
+    // PAINT_SEARCH_STEP_PX still describe exactly what happens on that path.
+    int search_half = PAINT_SEARCH_HALF_WIDTH_PX;
+    int search_step = PAINT_SEARCH_STEP_PX;
+    if (PAINT_SEARCH_WIDTH_FRAC > 0.0f && g_lane_px_per_row > 0.0f && pt.y > g_horizon_y) {
+        float lane_w = g_lane_px_per_row * (pt.y - static_cast<float>(g_horizon_y));
+        search_half = std::min(PAINT_SEARCH_MAX_HALF_PX,
+            std::max(PAINT_SEARCH_MIN_HALF_PX,
+                     static_cast<int>(PAINT_SEARCH_WIDTH_FRAC * lane_w)));
+        // Same number of probes across the span however wide it is, so a wider search
+        // means probes further apart rather than proportionally more work.
+        search_step = std::max(2, search_half / 3);
+    }
+
+    if (out_seg_a) *out_seg_a = cv::Point2f(pt.x - search_half, pt.y);
+    if (out_seg_b) *out_seg_b = cv::Point2f(pt.x + search_half, pt.y);
 
     auto sampleMaxBrightness = [&](cv::Point2f center, int half_win) {
         int cx = static_cast<int>(std::round(center.x));
@@ -707,7 +811,7 @@ bool isPaintSample(const cv::Mat& gray, cv::Point2f pt, cv::Point2f* out_seg_a, 
         };
 
     int line_brightness = 0;
-    for (int off = -PAINT_SEARCH_HALF_WIDTH_PX; off <= PAINT_SEARCH_HALF_WIDTH_PX; off += PAINT_SEARCH_STEP_PX) {
+    for (int off = -search_half; off <= search_half; off += search_step) {
         line_brightness = std::max(line_brightness, sampleMaxBrightness(cv::Point2f(pt.x + off, pt.y), 3));
     }
 
@@ -740,7 +844,7 @@ bool isPaintSample(const cv::Mat& gray, cv::Point2f pt, cv::Point2f* out_seg_a, 
     // (96.6%) but pushed the dashed channels up +5.3% and +4.7% - i.e. it started bridging
     // dash gaps, which is the "close dashes read as SOLID" failure - so it was rejected.
     const int BG_SATURATED = 250;
-    int bg_offset = PAINT_SEARCH_HALF_WIDTH_PX + 30;
+    int bg_offset = search_half + PAINT_BG_GAP_PX;
     int bg_left = sampleMaxBrightness(cv::Point2f(pt.x - bg_offset, pt.y), 5);
     int bg_right = sampleMaxBrightness(cv::Point2f(pt.x + bg_offset, pt.y), 5);
 
@@ -785,30 +889,24 @@ LineTypeResult classifyLineType(const cv::Mat& gray, std::vector<cv::Point> pts,
 
     std::sort(pts.begin(), pts.end(), [](const cv::Point& a, const cv::Point& b) { return a.y < b.y; });
 
-    // Drop the ends that cannot tell solid from dashed - see CLASSIFY_TRIM_FAR/NEAR at the
-    // top of the file. Tracking, fitting, the temporal check and the on-screen dots all
-    // still use the whole chain; this trim is local to the verdict. Skipped when it would
-    // leave too little to judge from, since classifying a compromised span beats not
-    // classifying at all.
+    // The window that gets a vote - see CLASSIFY_TRIM_FAR/NEAR at the top of the file.
+    // Computed here, applied after sampling: the whole chain is still sampled and every
+    // sample is still handed to the caller for drawing, so the excluded end looks exactly
+    // like the rest of the line on screen. It is only barred from voting.
+    int  vote_lo = 0, vote_hi = 0;
+    bool windowed = false;
     if ((CLASSIFY_TRIM_FAR > 0.0f || CLASSIFY_TRIM_NEAR > 0.0f) && pts.size() >= 6) {
         int y_far = pts.front().y, y_near = pts.back().y;   // sorted by y, so far end first
         float span = static_cast<float>(y_near - y_far);
         if (span > 1.0f) {
-            int lo = y_far + static_cast<int>(CLASSIFY_TRIM_FAR * span);
-            int hi = y_near - static_cast<int>(CLASSIFY_TRIM_NEAR * span);
-            std::vector<cv::Point> kept;
-            kept.reserve(pts.size());
-            for (const auto& q : pts) {
-                if (q.y >= lo && q.y <= hi) kept.push_back(q);
-            }
-            // n_points deliberately NOT updated: it is what the on-screen label reports,
-            // and it should keep describing the chain the dots actually show. The count
-            // that was classified is visible in n_samples.
-            if (kept.size() >= 3) pts.swap(kept);
+            vote_lo = y_far + static_cast<int>(CLASSIFY_TRIM_FAR * span);
+            vote_hi = y_near - static_cast<int>(CLASSIFY_TRIM_NEAR * span);
+            windowed = true;
         }
     }
 
-    std::vector<bool> samples;
+    std::vector<bool> all_paint;
+    std::vector<int>  all_y;
     const float STEP = 3.0f;
 
     for (size_t i = 0; i + 1 < pts.size(); ++i) {
@@ -824,10 +922,22 @@ LineTypeResult classifyLineType(const cv::Mat& gray, std::vector<cv::Point> pts,
             cv::Point2f sample_pt(p0.x + (p1.x - p0.x) * t, p0.y + (p1.y - p0.y) * t);
             cv::Point2f seg_a, seg_b;
             bool is_paint = isPaintSample(gray, sample_pt, &seg_a, &seg_b);
-            samples.push_back(is_paint);
+            all_paint.push_back(is_paint);
+            all_y.push_back(static_cast<int>(sample_pt.y));
             if (debug_samples) debug_samples->push_back({ seg_a, seg_b, is_paint });
         }
     }
+
+    // Keep only the samples inside the voting window. Falls back to the whole chain when
+    // the window would leave too little to judge from, since classifying a compromised
+    // span beats not classifying at all.
+    std::vector<bool> samples;
+    samples.reserve(all_paint.size());
+    for (size_t i = 0; i < all_paint.size(); ++i) {
+        if (!windowed || (all_y[i] >= vote_lo && all_y[i] <= vote_hi))
+            samples.push_back(all_paint[i]);
+    }
+    if (samples.size() < 10) samples = all_paint;
 
     result.n_samples = static_cast<int>(samples.size());
     if (samples.size() < 10) return result; // not enough to say anything - stays UNKNOWN
@@ -841,7 +951,9 @@ LineTypeResult classifyLineType(const cv::Mat& gray, std::vector<cv::Point> pts,
     result.transitions = transitions;
     result.painted_fraction = static_cast<float>(painted_count) / static_cast<float>(samples.size());
 
-    if (result.painted_fraction > SOLID_MIN_PAINTED_FRACTION && transitions <= SOLID_MAX_TRANSITIONS) { //bro icl transitions dont matter at all, sometimes the dashed lines have less transitons cuz its all red lmao
+    int max_transitions = std::max(SOLID_MIN_TRANSITION_ALLOWANCE,
+        static_cast<int>(SOLID_MAX_TRANSITION_RATE * static_cast<float>(samples.size())));
+    if (result.painted_fraction > SOLID_MIN_PAINTED_FRACTION && transitions <= max_transitions) { //bro icl transitions dont matter at all, sometimes the dashed lines have less transitons cuz its all red lmao
         result.type = LineType::SOLID;
     }
     else if (transitions >= DASHED_MIN_TRANSITIONS && result.painted_fraction > DASHED_MIN_PAINTED_FRACTION && result.painted_fraction < DASHED_MAX_PAINTED_FRACTION) { //once again, sometimes the dashes have less transitions
@@ -1014,6 +1126,7 @@ int main() {
         int  hood_raw_y = 0;         // the SAME measurement without PERMANENT_OFFSET_PX
         bool horizon_measured = false;
         int  horizon_y = 0;          // vanishing point, from ego-lane fits (see far gate)
+        float lane_px_per_row = 0.0f; // A: ego lane width gained per row below the horizon
         int  crop_bottom_y = 0;      // 0 = frame bottom; set once the ladder fit is known
     };
 
@@ -1154,16 +1267,21 @@ int main() {
         // and the gate is inert - the first ~3 seconds run exactly as they did before, and
         // are also what the estimate is built from.
         std::vector<int> horizon_samples;
+        std::vector<double> scale_samples;   // ego lane width gained per row, per frame
         int far_cutoff_y = 0;
         // 0 until the horizon is known, which means the frame-bottom anchoring the project
         // shipped with. The first ~3 seconds of a clip therefore behave exactly as before,
         // and are what the decision is made from.
         int crop_bottom_y = clips[file_idx].crop_bottom_y;
+        g_lane_px_per_row = 0.0f;
+        g_horizon_y = 0;
         if (clips[file_idx].horizon_measured && ENABLE_FAR_GATE) {
             int gate_frame_h = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
             if (gate_frame_h <= 1) gate_frame_h = 1080;
-            far_cutoff_y = clips[file_idx].horizon_y +
-                static_cast<int>(HORIZON_MARGIN_FRAC * static_cast<float>(gate_frame_h));
+            far_cutoff_y = farCutoffRow(clips[file_idx].horizon_y,
+                                        clips[file_idx].lane_px_per_row, gate_frame_h);
+            g_lane_px_per_row = clips[file_idx].lane_px_per_row;
+            g_horizon_y = clips[file_idx].horizon_y;
         }
 
         auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
@@ -1345,6 +1463,9 @@ int main() {
                 if (fitLine(detected_lanes[1], m1, c1) && fitLine(detected_lanes[2], m2, c2) &&
                     std::abs(m1 - m2) > 1e-6) {
                     double vy = (c2 - c1) / (m1 - m2);
+                    // The same two fits read the other way: how fast the ego lane widens
+                    // per row is the road's scale at this camera.
+                    scale_samples.push_back(m2 - m1);
                     // A sane vanishing point is above every tracked point and inside the frame.
                     if (vy > 0 && vy < static_cast<double>(frame.rows)) {
                         horizon_samples.push_back(static_cast<int>(vy));
@@ -1357,10 +1478,29 @@ int main() {
                     int h_y = horizon_samples[horizon_samples.size() / 2];
                     clips[file_idx].horizon_y = h_y;
                     clips[file_idx].horizon_measured = true;
-                    far_cutoff_y = h_y + static_cast<int>(HORIZON_MARGIN_FRAC * static_cast<float>(frame.rows));
+
+                    // The road's ruler, from the same fits over the same window. Median
+                    // for the same reason the vanishing point is one: a single curve or
+                    // lane change must not be able to move it.
+                    float lane_A = 0.0f;
+                    if (!scale_samples.empty()) {
+                        std::nth_element(scale_samples.begin(),
+                                         scale_samples.begin() + scale_samples.size() / 2,
+                                         scale_samples.end());
+                        lane_A = static_cast<float>(scale_samples[scale_samples.size() / 2]);
+                    }
+                    clips[file_idx].lane_px_per_row = lane_A;
+                    g_lane_px_per_row = lane_A;
+                    g_horizon_y = h_y;
+                    far_cutoff_y = farCutoffRow(h_y, lane_A, frame.rows);
+                    bool gate_by_scale = (lane_A >= LANE_SLOPE_MIN && lane_A <= LANE_SLOPE_MAX);
                     std::cout << "[horizon] " << video_path << ": vanishing point y=" << h_y
-                              << ", far gate at y=" << far_cutoff_y << " (" << HORIZON_MARGIN_FRAC
-                              << " x " << frame.rows << " rows below it)" << std::endl;
+                              << ", ego lane widens " << lane_A << "px per row, far gate at y="
+                              << far_cutoff_y;
+                    if (gate_by_scale) std::cout << " (where the ego lane narrows to "
+                                                 << MIN_LANE_WIDTH_PX << "px)" << std::endl;
+                    else std::cout << " (no usable lane scale - fell back to "
+                                   << HORIZON_MARGIN_FRAC << " x " << frame.rows << " rows)" << std::endl;
 
                     // Now that the road band is known, decide where the band's bottom edge
                     // belongs. See LADDER_FIT_MAX_RATIO. Changing it mid-clip moves every
@@ -1471,11 +1611,10 @@ int main() {
                 stables[l] = line_type_history[l].stable();
 
                 if (DEBUG_SHOW_PAINT_SAMPLES) {
-                    // Neutral spine along the WHOLE chain, drawn before the paint bars so
-                    // they cover it wherever classification actually ran. Without it the
-                    // trimmed ends (see CLASSIFY_TRIM_FAR/NEAR) read as the tracker having
-                    // given up there, when those points are still tracked, still fitted and
-                    // still drawn - they are only barred from voting on line type.
+                    // Neutral spine along the whole chain, drawn under the paint bars so
+                    // they cover it. The bars now span the whole chain too, so this only
+                    // shows through between them, joining up a line whose samples are
+                    // spaced further apart than the bars are wide.
                     for (size_t p = 0; p + 1 < points_for_display[l].size(); ++p) {
                         cv::line(overlay, points_for_display[l][p], points_for_display[l][p + 1],
                                  COLOR_TRACKING_DOT, 3, cv::LINE_AA);
